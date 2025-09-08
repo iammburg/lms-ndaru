@@ -1,4 +1,3 @@
-// storage-adapter-import-placeholder
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
@@ -6,6 +5,7 @@ import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
+import { s3Storage } from '@payloadcms/storage-s3'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
@@ -34,6 +34,22 @@ export default buildConfig({
   sharp,
   plugins: [
     payloadCloudPlugin(),
-    // storage-adapter-placeholder
+    s3Storage({
+      collections: {
+        media: {
+          prefix: 'media',
+        },
+      },
+      bucket: process.env.S3_BUCKET_NAME || '',
+      config: {
+        region: process.env.S3_REGION || 'us-east-1',
+        endpoint: process.env.S3_ENDPOINT || '',
+        credentials: {
+          accessKeyId: process.env.S3_ACCESS_KEY || '',
+          secretAccessKey: process.env.S3_SECRET_KEY || '',
+        },
+        forcePathStyle: true,
+      },
+    }),
   ],
 })
