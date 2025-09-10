@@ -1,6 +1,6 @@
 import React from 'react'
-import { montserrat } from './fonts'
-import './styles.css'
+import { montserrat } from '../fonts'
+import '../styles.css'
 import { ThemeProvider } from '@/components/theme-provider'
 
 export const metadata = {
