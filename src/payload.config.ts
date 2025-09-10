@@ -10,6 +10,7 @@ import { s3Storage } from '@payloadcms/storage-s3'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import nodeMailerAdapter from './utils/nodeMailerAdapter'
+import { Customers } from './collections/Customer'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -22,7 +23,7 @@ export default buildConfig({
     },
   },
   email: nodeMailerAdapter(),
-  collections: [Users, Media],
+  collections: [Users, Media, Customers],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
