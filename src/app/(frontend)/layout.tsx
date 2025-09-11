@@ -3,8 +3,9 @@ import './styles.css'
 import { ThemeProvider } from '@/components/theme-provider'
 
 export const metadata = {
-  description: 'A blank template using Payload in a Next.js app.',
-  title: 'Payload Blank Template Ygy',
+  description:
+    'Welcome to LMS Ndaru, your comprehensive learning management system designed to enhance educational experiences through seamless course management, interactive learning tools, and robust analytics.  ',
+  title: 'LMS Ndaru - Learning Management System for Modern Education',
 }
 
 export default async function FrontendLayout(props: { children: React.ReactNode }) {
