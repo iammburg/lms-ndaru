@@ -12,10 +12,19 @@ export default async function FrontendLayout(props: { children: React.ReactNode 
   const { children } = props
 
   return (
-    <main>
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-        {children}
-      </ThemeProvider>
-    </main>
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <main>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+        </main>
+      </body>
+    </html>
   )
 }
