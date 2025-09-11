@@ -1,5 +1,6 @@
 import React from 'react'
 import './styles.css'
+import { montserrat } from '@/lib/fonts'
 import { ThemeProvider } from '@/components/theme-provider'
 
 export const metadata = {
@@ -13,7 +14,7 @@ export default async function FrontendLayout(props: { children: React.ReactNode 
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>
+      <body className={montserrat.className}>
         <main>
           <ThemeProvider
             attribute="class"

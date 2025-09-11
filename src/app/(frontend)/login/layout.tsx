@@ -4,7 +4,7 @@ import { ThemeProvider } from '@/components/theme-provider'
 
 export const metadata = {
   description: 'Login page for LMS Ndaru',
-  title: 'Login Page | LMS Ndaru',
+  title: 'Login Page - LMS Ndaru',
 }
 
 export default async function LoginLayout(props: { children: React.ReactNode }) {
