@@ -1,20 +1,20 @@
 import React from 'react'
-import './styles.css'
+import '../styles.css'
 import { ThemeProvider } from '@/components/theme-provider'
 
 export const metadata = {
-  description: 'A blank template using Payload in a Next.js app.',
-  title: 'Payload Blank Template Ygy',
+  description: 'Login page for LMS Ndaru',
+  title: 'Login Page | LMS Ndaru',
 }
 
-export default async function FrontendLayout(props: { children: React.ReactNode }) {
+export default async function LoginLayout(props: { children: React.ReactNode }) {
   const { children } = props
 
   return (
-    <main>
+    <div>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
         {children}
       </ThemeProvider>
-    </main>
+    </div>
   )
 }
