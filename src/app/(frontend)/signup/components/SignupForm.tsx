@@ -51,7 +51,7 @@ export default function SignupForm(): ReactElement {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-black text-white">
+    <div className="flex min-h-screen items-center justify-center">
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Sign up to create new account</CardTitle>

@@ -4,7 +4,7 @@ import { ThemeProvider } from '@/components/theme-provider'
 
 export const metadata = {
   description: 'Signup page for LMS Ndaru',
-  title: 'Signup Page | LMS Ndaru',
+  title: 'Signup Page - LMS Ndaru',
 }
 
 export default async function SignupLayout(props: { children: React.ReactNode }) {
