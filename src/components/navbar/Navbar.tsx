@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
-import { Logo } from './logo'
-import { NavMenu } from './nav-menu'
-import { NavigationSheet } from './navigation-sheet'
+import { Logo } from './BrandLogo'
+import { NavMenu } from './NavMenu'
+import { NavigationSheet } from './NavigationSheet'
 import Link from 'next/link'
 
 import { headers as getHeaders } from 'next/headers.js'

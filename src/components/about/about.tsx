@@ -1,8 +1,4 @@
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
-import { ArrowUpRight, CirclePlay } from 'lucide-react'
-import Link from 'next/link'
+import Logos07Page from '../logos/LogoSection'
 
 const About = () => {
   return (
@@ -19,13 +15,16 @@ const About = () => {
           ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
           ullamco laboris nisi ut aliquip ex ea commodo consequat.
         </p>
-        <div className="mt-12 flex items-center justify-center gap-4">
+        {/* <div className="mt-12 flex items-center justify-center gap-4">
           <Button size="lg" className="rounded-full text-base">
             Belajar Sekarang <ArrowUpRight className="h-5! w-5!" />
           </Button>
           <Button variant="outline" size="lg" className="rounded-full text-base shadow-none">
             <CirclePlay className="h-5! w-5!" /> Tonton Demo
           </Button>
+        </div> */}
+        <div className="mt-10">
+          <Logos07Page />
         </div>
       </div>
     </div>
