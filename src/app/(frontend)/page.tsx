@@ -1,6 +1,8 @@
 import './styles.css'
 import Navbar01Page from '@/components/navbar-01/navbar-01'
 import Hero02 from '@/components/hero-02/hero-02'
+import About from '@/components/about/about'
+import Features01Page from '@/components/features-01/features-01'
 
 export default async function HomePage() {
   return (
@@ -10,6 +12,8 @@ export default async function HomePage() {
 
       <Navbar01Page />
       <Hero02 />
+      <About />
+      <Features01Page />
     </div>
   )
 }

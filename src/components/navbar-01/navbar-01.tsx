@@ -30,7 +30,7 @@ export default async function Navbar01Page() {
           {/* Desktop Menu */}
           <NavMenu className="hidden md:block" />
 
-          <div>
+          <div className="flex items-center gap-3">
             {!user ? (
               <div className="flex items-center gap-3">
                 <Button variant="outline" className="hidden sm:inline-flex">

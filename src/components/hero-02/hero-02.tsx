@@ -5,7 +5,7 @@ import React from 'react'
 
 const Hero02 = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center" id="home">
       <div className="max-w-(--breakpoint-xl) w-full mx-auto grid lg:grid-cols-2 gap-12 px-6 py-12">
         <div>
           <h1 className="mt-6 max-w-[17ch] text-4xl md:text-5xl lg:text-[2.75rem] xl:text-[3.25rem] font-semibold leading-[1.2]! tracking-tighter">
@@ -13,14 +13,14 @@ const Hero02 = () => {
           </h1>
           <p className="mt-6 max-w-[60ch] sm:text-lg">
             Lorem ipsum dolor sit amet itu artinya apa? Aku juga gak tau. Pokoknya nulis biar
-            menuhin Hero Section ini. Yang penting nulis. PayloadCMS berat banget asli.
+            menuhin Hero Section ini. Yang penting nulis. Kombinasi Next.js + PayloadCMS.
           </p>
           <div className="mt-12 flex items-center gap-4">
             <Button size="lg" className="rounded-full text-base">
               Belajar Sekarang <ArrowUpRight className="h-5! w-5!" />
             </Button>
             <Button variant="outline" size="lg" className="rounded-full text-base shadow-none">
-              <CirclePlay className="h-5! w-5!" /> Watch Demo
+              <CirclePlay className="h-5! w-5!" /> Tonton Demo
             </Button>
           </div>
         </div>
