@@ -15,11 +15,20 @@ const AuthenticatedLayout: FC<LayoutProps> = async ({ children }) => {
     return null
   }
   return (
-    <main className="authenticated-layout">
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-        {children}
-      </ThemeProvider>
-    </main>
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <main className="authenticated-layout">
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+        </main>
+      </body>
+    </html>
   )
 }
 
