@@ -4,6 +4,20 @@ import { QuizBlock } from './blocks/QuizBlock'
 
 export const Courses: CollectionConfig = {
   slug: 'courses',
+  access: {
+    read: ({ req: { user } }) => {
+      return Boolean(user)
+    },
+    create: ({ req: { user } }) => {
+      return user?.collection === 'users'
+    },
+    update: ({ req: { user } }) => {
+      return user?.collection === 'users'
+    },
+    delete: ({ req: { user } }) => {
+      return user?.collection === 'users'
+    },
+  },
   admin: {
     useAsTitle: 'title',
   },

@@ -15,7 +15,7 @@ const AuthenticatedLayout: FC<LayoutProps> = async ({ children }) => {
   }
 
   return (
-    <main className="authenticated-layout">
+    <main>
       <NavbarDasboard />
       {children}
     </main>
