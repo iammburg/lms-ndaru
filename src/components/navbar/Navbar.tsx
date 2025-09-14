@@ -10,7 +10,7 @@ import { getPayload } from 'payload'
 import { fileURLToPath } from 'url'
 import config from '@/payload.config'
 
-export default async function Navbar01Page() {
+export default async function Navbar() {
   const headers = await getHeaders()
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })

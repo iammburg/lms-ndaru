@@ -61,7 +61,7 @@ const testimonials = [
   },
 ]
 
-const Testimonial01 = () => (
+const Testimonial = () => (
   <div className="min-h-screen flex justify-center items-center py-12 px-6">
     <div>
       <h2 className="mb-14 text-xl sm:text-2xl md:text-3xl lg:text-4xl md:leading-[1.2] font-semibold text-center tracking-[-0.03em]">
@@ -107,4 +107,4 @@ const TwitterLogo = (props: ComponentProps<'svg'>) => (
   </svg>
 )
 
-export default Testimonial01
+export default Testimonial
