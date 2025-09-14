@@ -21,7 +21,7 @@ export const VideoBlock: Block = {
     },
     {
       name: 'playerUrl',
-      label: 'Bunny Player URL',
+      label: 'Player URL',
       type: 'text',
       required: true,
     },
