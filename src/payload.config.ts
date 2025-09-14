@@ -11,6 +11,8 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import nodeMailerAdapter from './utils/nodeMailerAdapter'
 import { Customers } from './collections/Customer'
+import { Courses } from './collections/courses/Courses'
+import { Participation } from './collections/courses/Participation'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -23,7 +25,7 @@ export default buildConfig({
     },
   },
   email: nodeMailerAdapter(),
-  collections: [Users, Media, Customers],
+  collections: [Users, Media, Customers, Courses, Participation],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

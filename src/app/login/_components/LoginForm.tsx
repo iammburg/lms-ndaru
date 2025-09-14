@@ -15,14 +15,14 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import SubmitButton from '@/components/SubmitButton'
-import { signup, SignupResponse } from '../actions/signup'
+import { login, LoginResponse } from '../_actions/login'
 
-export default function SignupForm(): ReactElement {
+export default function LoginForm(): ReactElement {
   const [isPending, setIsPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>): Promise<void> {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setIsPending(true)
     setError(null)
@@ -30,23 +30,14 @@ export default function SignupForm(): ReactElement {
     const formData = new FormData(event.currentTarget)
     const email = formData.get('email') as string
     const password = formData.get('password') as string
-    const confirmPassword = formData.get('confirmPassword') as string
 
-    if (password !== confirmPassword) {
-      setError('Passwords do not match')
-      setIsPending(false)
-      return
-    }
-
-    const result: SignupResponse = await signup({ email, password })
+    const result: LoginResponse = await login({ email, password })
     setIsPending(false)
-
-    console.log(result)
 
     if (result.success) {
       router.push('/dashboard')
     } else {
-      setError(result.error || 'Login failed')
+      setError(result.error || 'An unexpected error occurred')
     }
   }
 
@@ -54,11 +45,11 @@ export default function SignupForm(): ReactElement {
     <div className="flex min-h-screen items-center justify-center">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle>Sign up to create new account</CardTitle>
-          <CardDescription>Enter your email below to create new account</CardDescription>
+          <CardTitle>Login to your account</CardTitle>
+          <CardDescription>Enter your email below to login to your account</CardDescription>
           <CardAction>
             <Button variant="link">
-              <Link href={'/login'}>Login</Link>
+              <Link href={'/signup'}>Sign Up</Link>
             </Button>
           </CardAction>
         </CardHeader>
@@ -72,18 +63,18 @@ export default function SignupForm(): ReactElement {
               <div className="grid gap-2">
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
+                  <a
+                    href="#"
+                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                  >
+                    Forgot your password?
+                  </a>
                 </div>
                 <Input id="password" type="password" name="password" required />
               </div>
-              <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="confirmPassword">Confirm Password</Label>
-                </div>
-                <Input id="confirmPassword" type="password" name="confirmPassword" required />
-              </div>
               <div className="flex flex-col gap-2 mt-4">
                 {error && <p className="text-xs text-red-500">{error}</p>}
-                <SubmitButton loading={isPending} text="Signup" />
+                <SubmitButton loading={isPending} text="Login" />
               </div>
             </div>
           </form>

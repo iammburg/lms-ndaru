@@ -1,18 +1,8 @@
 import { redirect } from 'next/navigation'
 import React, { FC, ReactNode } from 'react'
-import { getUser } from './actions/getUser'
-import './styles.css'
-import { montserrat } from '@/lib/fonts'
-import { ThemeProvider } from '@/components/theme-provider'
-
-export const metadata = {
-  description:
-    'Welcome to LMS Ndaru, your comprehensive learning management system designed to enhance educational experiences through seamless course management, interactive learning tools, and robust analytics.  ',
-  title: 'LMS Ndaru - Learning Management System for Modern Education',
-  icons: {
-    icon: '/assets/icon.ico',
-  },
-}
+import { getUser } from './_actions/getUser'
+import '../styles.css'
+import NavbarDasboard from './_components/NavbarDashboard'
 
 interface LayoutProps {
   children: ReactNode
@@ -25,20 +15,10 @@ const AuthenticatedLayout: FC<LayoutProps> = async ({ children }) => {
   }
 
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${montserrat.className}`}>
-        <main className="authenticated-layout">
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-          </ThemeProvider>
-        </main>
-      </body>
-    </html>
+    <main>
+      <NavbarDasboard />
+      {children}
+    </main>
   )
 }
 

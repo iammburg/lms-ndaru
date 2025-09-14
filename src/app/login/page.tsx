@@ -1,10 +1,10 @@
 import React, { ReactElement } from 'react'
-import SignupForm from './components/SignupForm'
+import LoginForm from './_components/LoginForm'
 
 export default async function page(): Promise<ReactElement> {
   return (
     <div>
-      <SignupForm></SignupForm>
+      <LoginForm></LoginForm>
     </div>
   )
 }

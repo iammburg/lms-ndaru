@@ -3,7 +3,7 @@ import { ArrowUpRight, CirclePlay } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
 
-const Hero02 = () => {
+const Hero = () => {
   return (
     <div className="min-h-screen flex items-center justify-center" id="home">
       <div className="max-w-(--breakpoint-xl) w-full mx-auto grid lg:grid-cols-2 gap-12 px-6 py-12">
@@ -30,4 +30,4 @@ const Hero02 = () => {
   )
 }
 
-export default Hero02
+export default Hero

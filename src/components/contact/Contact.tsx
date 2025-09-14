@@ -9,12 +9,12 @@ import { Textarea } from '@/components/ui/textarea'
 import { MailIcon, MapPinIcon, MessageCircle, PhoneIcon } from 'lucide-react'
 import Link from 'next/link'
 
-const Contact02Page = () => (
+const Contact = () => (
   <div className="min-h-screen flex items-center justify-center py-16" id="contact">
     <div className="w-full max-w-(--breakpoint-xl) mx-auto px-6 xl:px-0">
-      <b className="text-muted-foreground uppercase font-semibold text-sm">Contact Us</b>
-      <h2 className="mt-3 text-3xl md:text-4xl font-semibold tracking-tight">
-        Chat with our friendly team!
+      <b className="text-muted-foreground uppercase font-semibold text-sm">Hubungi Kami</b>
+      <h2 className="mt-3 text-xl sm:text-2xl md:text-3xl lg:text-4xl md:leading-[1.2] font-semibold tracking-tight">
+        Hubungi kontak kami di bawah ini
       </h2>
       <p className="mt-3 text-base sm:text-lg text-muted-foreground">
         We&apos;d love to hear from you. Please fill out this form or shoot us an email.
@@ -128,4 +128,4 @@ const Contact02Page = () => (
   </div>
 )
 
-export default Contact02Page
+export default Contact

@@ -3,9 +3,8 @@
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { Customer } from '@/payload-types'
-import { Result } from '../../login/actions/login'
+import { Result } from '../../login/_actions/login'
 import { cookies } from 'next/headers'
-import { a } from 'vitest/dist/chunks/suite.d.FvehnV49.js'
 
 interface SignupParams {
   email: string
