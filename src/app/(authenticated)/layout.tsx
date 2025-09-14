@@ -4,6 +4,7 @@ import { getUser } from './actions/getUser'
 import './styles.css'
 import { montserrat } from '@/lib/fonts'
 import { ThemeProvider } from '@/components/theme-provider'
+import NavbarDasboard from './components/NavbarDashboard'
 
 export const metadata = {
   description:
@@ -34,6 +35,7 @@ const AuthenticatedLayout: FC<LayoutProps> = async ({ children }) => {
             enableSystem
             disableTransitionOnChange
           >
+            <NavbarDasboard />
             {children}
           </ThemeProvider>
         </main>

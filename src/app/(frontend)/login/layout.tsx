@@ -1,6 +1,8 @@
 import React from 'react'
 import '../styles.css'
 import { ThemeProvider } from '@/components/theme-provider'
+import { getUser } from '../../(authenticated)/actions/getUser'
+import { redirect } from 'next/navigation'
 
 export const metadata = {
   description: 'Login page for LMS Ndaru',
@@ -9,6 +11,11 @@ export const metadata = {
 
 export default async function LoginLayout(props: { children: React.ReactNode }) {
   const { children } = props
+
+  const user = await getUser()
+  if (user) {
+    redirect('/dashboard')
+  }
 
   return (
     <div>

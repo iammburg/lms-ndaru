@@ -2,8 +2,6 @@ import React from 'react'
 import './styles.css'
 import { montserrat } from '@/lib/fonts'
 import { ThemeProvider } from '@/components/theme-provider'
-import { getUser } from '../(authenticated)/actions/getUser'
-import { redirect } from 'next/navigation'
 
 export const metadata = {
   description:
@@ -16,11 +14,6 @@ export const metadata = {
 
 export default async function FrontendLayout(props: { children: React.ReactNode }) {
   const { children } = props
-
-  const user = await getUser()
-  if (user) {
-    redirect('/dashboard')
-  }
 
   return (
     <html lang="en" suppressHydrationWarning>

@@ -3,7 +3,7 @@ import Navbar01Page from '@/components/navbar/Navbar'
 import Hero02 from '@/components/hero/Hero'
 import About from '@/components/about/about'
 import Features01Page from '@/components/courses/Courses'
-import Testimonial01 from '@/components/Testimonial/Testimonial'
+import Testimonial01 from '@/components/testimonial/Testimonial'
 import Contact02Page from '@/components/contact/Contact'
 
 export default async function HomePage() {
