@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { logout } from '../actions/logout'
+import { logout } from '../_actions/logout'
 import { Button } from '@/components/ui/button'
 import { LogOut } from 'lucide-react'
 

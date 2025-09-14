@@ -6,7 +6,7 @@ import configPromise from '@payload-config'
 import Image from 'next/image'
 import { Course } from '@/payload-types'
 import Link from 'next/link'
-import { getUser } from '../actions/getUser'
+import { getUser } from '../_actions/getUser'
 
 const page = async () => {
   const payload = await getPayload({ config: configPromise })
