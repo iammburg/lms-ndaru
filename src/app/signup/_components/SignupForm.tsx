@@ -58,7 +58,7 @@ export default function SignupForm(): ReactElement {
           <CardDescription>Enter your email below to create new account</CardDescription>
           <CardAction>
             <Button variant="link">
-              <Link href={'/login'}>Login</Link>
+              <Link href="/login">Login</Link>
             </Button>
           </CardAction>
         </CardHeader>

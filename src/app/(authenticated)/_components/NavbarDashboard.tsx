@@ -5,7 +5,7 @@ import { NavMenu } from './NavMenu'
 import { NavigationSheet } from './NavigationSheet'
 import LogoutButton from './LogoutButton'
 
-const NavbarDasboard = () => {
+const NavbarDashboard = () => {
   return (
     <div className="bg-muted">
       <nav className="h-16 bg-background border-b">
@@ -31,4 +31,4 @@ const NavbarDasboard = () => {
   )
 }
 
-export default NavbarDasboard
+export default NavbarDashboard

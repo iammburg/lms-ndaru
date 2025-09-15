@@ -17,7 +17,7 @@ const Contact = () => (
         Hubungi kontak kami di bawah ini
       </h2>
       <p className="mt-3 text-base sm:text-lg text-muted-foreground">
-        We&apos;d love to hear from you. Please fill out this form or shoot us an email.
+        Kami ingin mendengar dari Anda. Silakan isi formulir ini atau kirimkan email kepada kami.
       </p>
       <div className="mt-24 grid lg:grid-cols-2 gap-16 md:gap-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-12">

@@ -2,13 +2,13 @@ import { redirect } from 'next/navigation'
 import React, { FC, ReactNode } from 'react'
 import { getUser } from './_actions/getUser'
 import '../styles.css'
-import NavbarDasboard from './_components/NavbarDashboard'
+import NavbarDashboard from './_components/NavbarDashboard'
 
-interface LayoutProps {
+interface TemplateProps {
   children: ReactNode
 }
 
-const AuthenticatedLayout: FC<LayoutProps> = async ({ children }) => {
+const Template: FC<TemplateProps> = async ({ children }) => {
   const user = await getUser()
   if (!user) {
     redirect('/login')
@@ -16,10 +16,10 @@ const AuthenticatedLayout: FC<LayoutProps> = async ({ children }) => {
 
   return (
     <main>
-      <NavbarDasboard />
+      <NavbarDashboard />
       {children}
     </main>
   )
 }
 
-export default AuthenticatedLayout
+export default Template
