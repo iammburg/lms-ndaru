@@ -25,22 +25,22 @@ export const NavMenu = (props: ComponentProps<typeof NavigationMenu>) => {
               pathname === '/dashboard' && 'bg-accent text-accent-foreground',
             )}
           >
-            <Link href={'/dashboard'}>Dashboard</Link>
+            <Link href="/dashboard">Dashboard</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
-            <Link href="#">Blog</Link>
+            <Link href="#">Courses</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
-            <Link href="#">About</Link>
+            <Link href="#">Certificate</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
-            <Link href="#">Contact Us</Link>
+            <Link href="#">Forum</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>

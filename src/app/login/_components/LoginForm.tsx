@@ -49,7 +49,7 @@ export default function LoginForm(): ReactElement {
           <CardDescription>Enter your email below to login to your account</CardDescription>
           <CardAction>
             <Button variant="link">
-              <Link href={'/signup'}>Sign Up</Link>
+              <Link href="/signup">Sign Up</Link>
             </Button>
           </CardAction>
         </CardHeader>

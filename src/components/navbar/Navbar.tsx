@@ -20,7 +20,7 @@ export default async function Navbar() {
     <div className="bg-muted sticky top-0 z-50">
       <nav className="h-16 bg-background border-b">
         <div className="h-full flex items-center justify-between max-w-(--breakpoint-xl) mx-auto px-4 sm:px-6 lg:px-8">
-          <Link href={'/'}>
+          <Link href="/">
             <div className="flex items-center space-x-2 font-bold text-lg">
               <Logo />
               <span>LMS Ndaru</span>
@@ -34,15 +34,15 @@ export default async function Navbar() {
             {!user ? (
               <div className="flex items-center gap-3">
                 <Button variant="outline" className="hidden sm:inline-flex">
-                  <Link href={'/login'}>Log In</Link>
+                  <Link href="/login">Log In</Link>
                 </Button>
                 <Button>
-                  <Link href={'/signup'}>Sign Up</Link>
+                  <Link href="/signup">Sign Up</Link>
                 </Button>
               </div>
             ) : (
               <Button>
-                <Link href={'/dashboard'}>Dashboard</Link>
+                <Link href="/dashboard">Dashboard</Link>
               </Button>
             )}
 

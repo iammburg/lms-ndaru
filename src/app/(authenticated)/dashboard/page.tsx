@@ -32,9 +32,9 @@ const page = async () => {
   return (
     <div className="flex flex-col mx-auto w-full max-w-4xl p-4 gap-4">
       <div className="text-xl">
-        Welcome, <span className="text-gray-400">{user?.email}</span>
+        Selamat datang, <span className="text-gray-400">{user?.email}</span>
       </div>
-      <div className="text-sm text-teal-400">All Courses</div>
+      <div className="text-sm text-cyan-500">Semua Course</div>
       <div className="grid grid-cols-2 gap-4">
         <Suspense fallback={<div>Loading...</div>}>
           {courses.map((course) => {
