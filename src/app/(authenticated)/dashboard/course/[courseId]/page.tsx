@@ -68,8 +68,8 @@ const CoursePage = async ({ params }: { params: { courseId: string } }) => {
               return (
                 <Card className="w-full" key={id}>
                   <CardHeader>
-                    <CardTitle className="flex items-center text-cyan-500 gap-4">
-                      <Video className="w-10 h-10" />
+                    <CardTitle className="flex items-center text-cyan-500 gap-4 text-sm sm:text-base md:text-lg">
+                      <Video className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 flex-shrink-0" />
                       {block.title}
                     </CardTitle>
                     <CardDescription>Durasi: {block.duration} Menit</CardDescription>
@@ -85,8 +85,8 @@ const CoursePage = async ({ params }: { params: { courseId: string } }) => {
               return (
                 <Card className="w-full" key={id}>
                   <CardHeader>
-                    <CardTitle className="flex items-center text-orange-500 gap-4">
-                      <BookCheck className="w-10 h-10" />
+                    <CardTitle className="flex items-center text-orange-500 gap-4 text-sm sm:text-base md:text-lg">
+                      <BookCheck className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 flex-shrink-0" />
                       {block.title}
                     </CardTitle>
                     <CardDescription>Jumlah Quiz: {block.questions?.length || 0}</CardDescription>
