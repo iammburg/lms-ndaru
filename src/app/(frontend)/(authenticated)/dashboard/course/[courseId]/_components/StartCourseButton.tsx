@@ -45,13 +45,18 @@ export default function StartCourseButton({ courseId }: { courseId: number }) {
         className="w-full"
       >
         {isLoading ? (
-          <AiOutlineLoading className="animate-spin text-xl" />
+          <>
+            <AiOutlineLoading className="animate-spin text-xl" /> Memproses
+          </>
         ) : isError ? (
-          <AiOutlineExclamationCircle className="text-xl" />
+          <>
+            <AiOutlineExclamationCircle className="text-xl" /> Terjadi Kesalahan
+          </>
         ) : (
-          <AiFillPlayCircle className="text-xl" />
+          <>
+            <AiFillPlayCircle className="text-xl" /> Mulai Kursus
+          </>
         )}
-        {isLoading ? 'Memulai...' : isError ? 'Coba Lagi' : 'Mulai Kursus'}
       </Button>
       {isError && error && <p className="mt-2 text-sm text-destructive">{error}</p>}
     </div>
