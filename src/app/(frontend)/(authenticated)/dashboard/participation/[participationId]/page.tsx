@@ -34,7 +34,7 @@ export default async function ParticipationPage({
 
   return (
     <div>
-      <div>{participation.course.title}</div>
+      <div>{participation.course && typeof participation.course === 'object' ? participation.course.title : 'No course assigned'}</div>
     </div>
   )
 }
