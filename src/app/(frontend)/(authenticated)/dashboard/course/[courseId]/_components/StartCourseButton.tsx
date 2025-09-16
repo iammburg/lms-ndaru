@@ -5,7 +5,7 @@ import { Participation } from '@/payload-types'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 import { useState, MouseEvent } from 'react'
-import { AiFillPlayCircle, AiOutlineExclamationCircle, AiOutlineLoading } from 'react-icons/ai'
+import { LoaderCircle, Play, TriangleAlert } from 'lucide-react'
 
 export default function StartCourseButton({ courseId }: { courseId: number }) {
   const router = useRouter()
@@ -46,15 +46,15 @@ export default function StartCourseButton({ courseId }: { courseId: number }) {
       >
         {isLoading ? (
           <>
-            <AiOutlineLoading className="animate-spin text-xl" /> Memproses
+            <LoaderCircle className="animate-spin text-xl" /> Memproses
           </>
         ) : isError ? (
           <>
-            <AiOutlineExclamationCircle className="text-xl" /> Terjadi Kesalahan
+            <TriangleAlert className="text-xl" /> Terjadi Kesalahan
           </>
         ) : (
           <>
-            <AiFillPlayCircle className="text-xl" /> Mulai Kursus
+            <Play className="text-xl" /> Mulai Kursus
           </>
         )}
       </Button>
