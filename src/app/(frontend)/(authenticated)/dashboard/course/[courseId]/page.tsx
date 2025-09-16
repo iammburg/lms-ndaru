@@ -1,6 +1,6 @@
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
-import { getUser } from '@/app/(authenticated)/_actions/getUser'
+import { getUser } from '@/app/(frontend)/(authenticated)/_actions/getUser'
 import { Course, Media } from '@/payload-types'
 import { notFound } from 'next/navigation'
 import { ArrowLeft, BookCheck, Video } from 'lucide-react'
@@ -14,6 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import StartCourseButton from './_components/StartCourseButton'
 
 const CoursePage = async ({ params }: { params: { courseId: string } }) => {
   const { courseId } = await params
@@ -69,14 +70,14 @@ const CoursePage = async ({ params }: { params: { courseId: string } }) => {
                 <Card className="w-full" key={id}>
                   <CardHeader>
                     <CardTitle className="flex items-center text-cyan-500 gap-4 text-sm sm:text-base md:text-lg">
-                      <Video className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 flex-shrink-0" />
+                      <Video className="w-5 h-5 sm:w-8 sm:h-8 md:w-10 md:h-10 flex-shrink-0" />
                       {block.title}
                     </CardTitle>
                     <CardDescription>Durasi: {block.duration} Menit</CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  {/* <CardContent>
                     <Button className="w-full">Tonton Video</Button>
-                  </CardContent>
+                  </CardContent> */}
                 </Card>
               )
             }
@@ -86,20 +87,22 @@ const CoursePage = async ({ params }: { params: { courseId: string } }) => {
                 <Card className="w-full" key={id}>
                   <CardHeader>
                     <CardTitle className="flex items-center text-orange-500 gap-4 text-sm sm:text-base md:text-lg">
-                      <BookCheck className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 flex-shrink-0" />
+                      <BookCheck className="w-5 h-5 sm:w-8 sm:h-8 md:w-10 md:h-10 flex-shrink-0" />
                       {block.title}
                     </CardTitle>
                     <CardDescription>Jumlah Quiz: {block.questions?.length || 0}</CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  {/* <CardContent>
                     <Button className="w-full">Kerjakan Quiz</Button>
-                  </CardContent>
+                  </CardContent> */}
                 </Card>
               )
             }
           })}
         </div>
       </div>
+
+      <StartCourseButton courseId={course.id} />
     </div>
   )
 }
