@@ -14,6 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import StartCourseButton from './_components/StartCourseButton'
 
 const CoursePage = async ({ params }: { params: { courseId: string } }) => {
   const { courseId } = await params
@@ -74,9 +75,9 @@ const CoursePage = async ({ params }: { params: { courseId: string } }) => {
                     </CardTitle>
                     <CardDescription>Durasi: {block.duration} Menit</CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  {/* <CardContent>
                     <Button className="w-full">Tonton Video</Button>
-                  </CardContent>
+                  </CardContent> */}
                 </Card>
               )
             }
@@ -91,15 +92,17 @@ const CoursePage = async ({ params }: { params: { courseId: string } }) => {
                     </CardTitle>
                     <CardDescription>Jumlah Quiz: {block.questions?.length || 0}</CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  {/* <CardContent>
                     <Button className="w-full">Kerjakan Quiz</Button>
-                  </CardContent>
+                  </CardContent> */}
                 </Card>
               )
             }
           })}
         </div>
       </div>
+
+      <StartCourseButton courseId={course.id} />
     </div>
   )
 }
