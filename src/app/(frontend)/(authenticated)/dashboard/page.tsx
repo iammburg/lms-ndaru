@@ -60,12 +60,7 @@ const page = async () => {
         </p>
       </div>
       <div className="text-base lg:text-lg text-cyan-500 mt-4 lg:mt-6">Course yang kamu ikuti</div>
-      {/* {participations && participations.length > 0 && (
-        <div className="text-base lg:text-lg text-cyan-500 mt-4 lg:mt-6">
-          Course yang kamu ikuti
-        </div>
-      )} */}
-      {participations ? (
+      {participations && participations.length > 0 ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4">
           <Suspense fallback={<div>Loading...</div>}>
             {participations.map((participation) => {
@@ -74,7 +69,7 @@ const page = async () => {
           </Suspense>
         </div>
       ) : (
-        <div className="text-sm text-gray-500">Kamu belum mengikuti course apapun.</div>
+        <div className="text-sm">Kamu belum mengikuti course apapun.</div>
       )}
       <div className="text-base lg:text-lg text-cyan-500 mt-4 lg:mt-6">Semua Course</div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4">
@@ -84,9 +79,9 @@ const page = async () => {
               <Link
                 href={`/dashboard/course/${course.id}`}
                 key={course.id}
-                className="flex flex-col cursor-pointer relative border rounded-xl border-gray-700 hover:border-white transition ease-in-out duration-100 overflow-hidden"
+                className="flex flex-col cursor-pointer relative border rounded-md border-gray-700 hover:border-white transition ease-in-out duration-100 overflow-hidden"
               >
-                <div className="relative w-full aspect-video border rounded-xl overflow-hidden">
+                <div className="relative w-full aspect-video border rounded-md overflow-hidden">
                   {course.image && typeof course.image === 'object' && course.image.url ? (
                     <Image alt={`${course.title} thumbnail`} src={course.image.url} fill={true} />
                   ) : (

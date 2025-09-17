@@ -29,6 +29,6 @@ export async function markProgress(participation: Participation) {
     return updateProgress
   } catch (error) {
     console.error('Error updating participation progress:', error)
-    return null
+    throw new Error(error instanceof Error ? error.message : String(error))
   }
 }

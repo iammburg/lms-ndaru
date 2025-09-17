@@ -42,7 +42,7 @@ export default function StartCourseButton({ courseId }: { courseId: number }) {
         disabled={isLoading}
         variant={isError ? 'destructive' : 'default'}
         size="lg"
-        className="w-full"
+        className="w-full cursor-pointer"
       >
         {isLoading ? (
           <>
@@ -54,7 +54,7 @@ export default function StartCourseButton({ courseId }: { courseId: number }) {
           </>
         ) : (
           <>
-            <Play className="text-xl" /> Mulai Kursus
+            <Play className="text-xl" /> Klik di sini untuk memulai course
           </>
         )}
       </Button>

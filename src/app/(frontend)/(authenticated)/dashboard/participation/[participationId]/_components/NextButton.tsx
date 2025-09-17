@@ -13,10 +13,10 @@ export default function NextButton({
   onClick: () => void
 }) {
   return (
-    <Button onClick={onClick} disabled={loading}>
-      {text}{' '}
-      <div className="ml-2 flex items-center">
-        <LoaderCircle className={`animate-spin ${loading ? 'block' : 'hidden'}`} />
+    <Button onClick={onClick} disabled={loading} className="cursor-pointer w-full">
+      {text}
+      <div className="flex items-center">
+        <LoaderCircle className={`animate-spin ${loading ? 'inline-block' : 'hidden'}`} />
       </div>
     </Button>
   )

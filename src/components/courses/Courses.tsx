@@ -49,7 +49,7 @@ const Features = () => {
         </h2>
         <div className="mt-10 sm:mt-16 grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-(--breakpoint-lg) mx-auto px-6">
           {features.map((feature) => (
-            <div key={feature.title} className="flex flex-col border rounded-xl py-6 px-5">
+            <div key={feature.title} className="flex flex-col border rounded-md py-6 px-5">
               <div className="mb-4 h-10 w-10 flex items-center justify-center bg-muted rounded-full">
                 <feature.icon className="size-5" />
               </div>

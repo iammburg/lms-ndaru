@@ -24,7 +24,7 @@ const Hero = () => {
             </Button>
           </div>
         </div>
-        <div className="w-full aspect-video bg-accent rounded-xl" />
+        <div className="w-full aspect-video bg-accent rounded-md" />
       </div>
     </div>
   )

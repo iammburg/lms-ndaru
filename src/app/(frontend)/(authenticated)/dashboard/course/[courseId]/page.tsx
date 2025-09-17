@@ -72,7 +72,7 @@ const CoursePage = async ({ params }: { params: { courseId: string } }) => {
       </Link>
 
       <img
-        className="object-cover object-center aspect-video overflow-hidden w-full rounded-xl border border-gray-700"
+        className="object-cover object-center aspect-video overflow-hidden w-full rounded-md border border-gray-700"
         src={(course.image as Media | null)?.url ?? 'https://placehold.co/600x400.png'}
         alt={`${course.title} thumbnail`}
       />
@@ -84,7 +84,7 @@ const CoursePage = async ({ params }: { params: { courseId: string } }) => {
         <p className="mt-4 text-gray-700 dark:text-gray-200">{course.description}</p>
       </div>
 
-      <div className="mt-8 mb-8">
+      <div className="mt-8">
         <h2 className="text-xl font-semibold mb-4">Kurikulum</h2>
         <div className="flex flex-col gap-4">
           {course.curriculum?.map((block, id) => {
@@ -121,7 +121,7 @@ const CoursePage = async ({ params }: { params: { courseId: string } }) => {
         </div>
       </div>
 
-      <Separator />
+      <Separator className="mt-8" />
 
       {participation ? (
         <ResumeCourseButton participation={participation} />
