@@ -24,8 +24,8 @@ export default function ResumeCourseButton({ participation }: { participation: P
 
   return (
     <Card className="py-3 lg:py-4">
-      <CardHeader className="pb-3 lg:pb-4">
-        <CardTitle className="text-sm lg:text-base font-medium leading-tight line-clamp-2">
+      <CardHeader>
+        <CardTitle className="text-sm lg:text-base font-normal leading-tight line-clamp-2">
           {course.title}
         </CardTitle>
       </CardHeader>
@@ -34,7 +34,7 @@ export default function ResumeCourseButton({ participation }: { participation: P
         <div className="space-y-2">
           <div className="flex justify-between text-xs lg:text-sm">
             <span className="text-muted-foreground">Progress</span>
-            <span className="font-medium text-right">
+            <span className="font-normal text-right">
               <span className="hidden sm:inline">
                 {progress} / {courseLenght} materi{' '}
               </span>
@@ -54,14 +54,14 @@ export default function ResumeCourseButton({ participation }: { participation: P
             <Calendar className="size-3 lg:size-4 flex-shrink-0" />
             <div className="min-w-0">
               <span className="text-xs">Dimulai:</span>{' '}
-              <span className="font-medium text-foreground">{createdDate}</span>
+              <span className="font-normal text-foreground">{createdDate}</span>
             </div>
           </div>
           <div className="flex items-center gap-1.5 text-muted-foreground">
             <Clock className="size-3 lg:size-4 flex-shrink-0" />
             <div className="min-w-0">
               <span className="text-xs">Update:</span>{' '}
-              <span className="font-medium text-foreground">{updatedDate}</span>
+              <span className="font-normal text-foreground">{updatedDate}</span>
             </div>
           </div>
         </div>

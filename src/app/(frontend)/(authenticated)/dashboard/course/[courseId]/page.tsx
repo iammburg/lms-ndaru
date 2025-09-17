@@ -64,7 +64,7 @@ const CoursePage = async ({ params }: { params: { courseId: string } }) => {
   }
 
   return (
-    <div className="flex flex-col mx-auto w-full max-w-5xl p-4 gap-4">
+    <div className="flex flex-col mx-auto w-full max-w-5xl p-3 sm:p-4 lg:p-6 gap-4">
       <Link href="/dashboard">
         <Button variant="link" className="mb-4">
           <ArrowLeft /> Kembali ke Dashboard
