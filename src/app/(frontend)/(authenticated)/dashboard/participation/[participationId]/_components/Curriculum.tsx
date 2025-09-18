@@ -1,6 +1,6 @@
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Course } from '@/payload-types'
-import { SquarePen, Video } from 'lucide-react'
+import { PartyPopper, SquarePen, Video } from 'lucide-react'
 
 export default function Curriculum({
   course,
@@ -40,6 +40,22 @@ export default function Curriculum({
                 </CardTitle>
                 <CardDescription className="flex items-center gap-2">
                   <SquarePen className="size-4" /> Jumlah Quiz: {block.questions?.length || 0}
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          )
+        }
+
+        if (block.blockType === 'finish') {
+          return (
+            <Card key={index} className={`w-full py-3 ${className}`}>
+              <CardHeader>
+                <CardTitle className="flex items-center text-green-500 font-medium gap-4 text-sm md:text-base">
+                  Akhir Course
+                </CardTitle>
+                <CardDescription className="flex items-center gap-2">
+                  <PartyPopper className="size-4" /> Jika sudah menyelesaikan course, kamu bisa
+                  mengunduh sertifikat
                 </CardDescription>
               </CardHeader>
             </Card>
