@@ -10,7 +10,7 @@ export default function Curriculum({
   currentProgress: number
 }) {
   return (
-    <div className="flex flex-col gap-4 overflow-y-auto">
+    <div className="flex flex-col gap-4 overflow-y-auto mb-10 scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-700 scrollbar-track-transparent max-h-[400px]">
       {course.curriculum?.map((block, index) => {
         const isCurrent = index === currentProgress
         const borderClass = isCurrent ? 'border-blue-500' : 'border-gray-300 dark:border-gray-700'

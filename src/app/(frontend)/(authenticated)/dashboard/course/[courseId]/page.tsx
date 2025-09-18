@@ -64,7 +64,7 @@ const CoursePage = async ({ params }: { params: { courseId: string } }) => {
   }
 
   return (
-    <div className="flex flex-col mx-auto w-full max-w-5xl p-3 sm:p-4 lg:p-6 gap-4">
+    <div className="flex flex-col mx-auto w-full max-w-5xl p-3 sm:p-4 lg:p-6 gap-4 mb-10">
       <Link href="/dashboard">
         <Button variant="link" className="mb-4">
           <ArrowLeft /> Kembali ke Dashboard
@@ -123,6 +123,7 @@ const CoursePage = async ({ params }: { params: { courseId: string } }) => {
 
       <Separator className="mt-8" />
 
+      <h2 className="text-xl font-semibold">Siap untuk belajar?</h2>
       {participation ? (
         <ResumeCourseButton participation={participation} />
       ) : (

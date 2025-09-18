@@ -36,7 +36,8 @@ export default function StartCourseButton({ courseId }: { courseId: number }) {
   const isError = status === 'error'
 
   return (
-    <div className="mt-6">
+    <div>
+      {isError && error && <p className="mb-2 text-sm text-destructive">{error}</p>}
       <Button
         onClick={handleStartCourse}
         disabled={isLoading}
@@ -58,7 +59,6 @@ export default function StartCourseButton({ courseId }: { courseId: number }) {
           </>
         )}
       </Button>
-      {isError && error && <p className="mt-2 text-sm text-destructive">{error}</p>}
     </div>
   )
 }
