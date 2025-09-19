@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        body {
+            margin: 0;
+            padding: 40px;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .certificate {
+            background: white;
+            padding: 60px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 100%;
+            max-width: 700px;
+            border: 8px solid #f8f9fa;
+        }
+
+        .header {
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .title {
+            font-size: 42px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: #6c757d;
+            margin-bottom: 30px;
+        }
+
+        .recipient {
+            font-size: 28px;
+            color: #343a40;
+            margin: 20px 0;
+            font-weight: 600;
+        }
+
+        .course-title {
+            font-size: 24px;
+            color: #667eea;
+            font-weight: bold;
+            margin: 20px 0;
+            text-decoration: underline;
+        }
+
+        .completion-text {
+            font-size: 16px;
+            color: #6c757d;
+            line-height: 1.6;
+            margin: 20px 0;
+        }
+
+        .date {
+            font-size: 14px;
+            color: #6c757d;
+            margin-top: 40px;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .signature-line {
+            border-bottom: 1px solid #6c757d;
+            width: 200px;
+            margin: 0 auto 10px;
+        }
+
+        .signature-text {
+            font-size: 12px;
+            color: #6c757d;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="certificate">
+        <div class="header">
+            <div class="title">Certificate</div>
+            <div class="subtitle">of Course Completion</div>
+        </div>
+
+        <div class="completion-text">
+            This is to certify that
+        </div>
+
+        <div class="recipient">
+            <%= name %>
+        </div>
+
+        <div class="completion-text">
+            has successfully completed the course
+        </div>
+
+        <div class="course-title">
+            <%= courseTitle %>
+        </div>
+
+        <div class="completion-text">
+            and has demonstrated the knowledge and skills necessary for certification.
+        </div>
+
+        <div class="date">
+            Date of Completion: <%= date %>
+        </div>
+
+        <div class="footer">
+            <div class="signature-line"></div>
+            <div class="signature-text">Authorized Signature</div>
+        </div>
+    </div>
+</body>
+
+</html>
