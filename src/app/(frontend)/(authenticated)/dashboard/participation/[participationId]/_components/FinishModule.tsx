@@ -17,7 +17,10 @@ export default function FinishModule({ participation }: { participation: Partici
       })
 
       if (!response.ok) {
-        throw new Error('Failed to generate certificate')
+        const errorText = await response.text()
+        throw new Error(
+          `Failed to generate certificate: ${response.status} ${response.statusText}. ${errorText}`,
+        )
       }
 
       const blob = await response.blob()
