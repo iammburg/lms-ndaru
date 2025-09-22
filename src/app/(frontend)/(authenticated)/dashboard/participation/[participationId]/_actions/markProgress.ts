@@ -1,34 +1,30 @@
 'use server'
 
 import { Participation } from '@/payload-types'
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
-import { getUser } from '@/app/(frontend)/(authenticated)/_actions/getUser'
+import { completeModule } from './updateParticipation'
 
-export async function markProgress(participation: Participation) {
-  const payload = await getPayload({ config: configPromise })
-  const user = await getUser()
-
-  if (!participation || typeof participation.progress !== 'number') {
-    console.error('Invalid participation or progress')
+export async function markProgress(participation: Participation, totalModules: number) {
+  if (!participation || typeof participation.currentModule !== 'number') {
+    console.error('Invalid participation or currentModule')
     return null
   }
 
-  const nextProgress = participation.progress + 1
+  const currentModuleIndex = participation.currentModule
 
   try {
-    const updateProgress = await payload.update({
-      collection: 'participation',
-      id: participation.id,
-      data: {
-        progress: nextProgress,
-      },
-      overrideAccess: false,
-      user: user,
-    })
-    return updateProgress
+    const updatedParticipation = await completeModule(
+      participation.id.toString(),
+      currentModuleIndex,
+      totalModules,
+    )
+
+    return updatedParticipation
   } catch (error) {
-    console.error('Error updating participation progress:', error)
+    console.error('Error marking progress:', error)
     throw new Error(error instanceof Error ? error.message : String(error))
   }
 }
+
+// ini kita ganti biar pakai function completeModule yg ada di updateParticipation.ts ygy
+// biar konsisten aja sih, soalnya function buat update participation udah ada di situ
+// jadi daripada bikin function baru mending pake yg udah ada

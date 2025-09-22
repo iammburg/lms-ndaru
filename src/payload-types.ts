@@ -266,7 +266,18 @@ export interface Participation {
   id: number;
   customer: number | Customer;
   course: number | Course;
-  progress?: number | null;
+  currentModule?: number | null;
+  completedModules?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  highestUnlockedModule?: number | null;
+  isCompleted?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -470,7 +481,10 @@ export interface CoursesSelect<T extends boolean = true> {
 export interface ParticipationSelect<T extends boolean = true> {
   customer?: T;
   course?: T;
-  progress?: T;
+  currentModule?: T;
+  completedModules?: T;
+  highestUnlockedModule?: T;
+  isCompleted?: T;
   updatedAt?: T;
   createdAt?: T;
 }

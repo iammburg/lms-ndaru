@@ -14,9 +14,17 @@ interface QuizModuleProps {
   module: any
   participation: Participation
   onCompleted: (nextIndex: number) => void
+  totalModules: number
+  onParticipationUpdate: (participation: Participation) => void
 }
 
-export default function QuizModule({ module, participation, onCompleted }: QuizModuleProps) {
+export default function QuizModule({
+  module,
+  participation,
+  onCompleted,
+  totalModules,
+  onParticipationUpdate,
+}: QuizModuleProps) {
   const [message, setMessage] = useState<string>('')
   const [userAnswers, setUserAnswers] = useState<boolean[][]>([])
   const [loading, setLoading] = useState(false)
@@ -37,9 +45,10 @@ export default function QuizModule({ module, participation, onCompleted }: QuizM
   async function handleNextModule() {
     setLoading(true)
     try {
-      const updateParticipation = await markProgress(participation)
-      if (updateParticipation && updateParticipation.progress) {
-        onCompleted(updateParticipation.progress)
+      const updateParticipation = await markProgress(participation, totalModules)
+      if (updateParticipation) {
+        onParticipationUpdate(updateParticipation)
+        onCompleted(updateParticipation.currentModule ?? 0)
       } else {
         console.error('Failed to update participation progress')
       }

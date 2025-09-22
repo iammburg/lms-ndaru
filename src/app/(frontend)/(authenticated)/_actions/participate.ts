@@ -18,7 +18,10 @@ export async function participate({ courseId }: { courseId: number }) {
       data: {
         course: courseId,
         customer: user.id,
-        progress: 0,
+        currentModule: 0,
+        completedModules: [],
+        highestUnlockedModule: 0,
+        isCompleted: false,
       },
       overrideAccess: false,
       user: user,
@@ -30,3 +33,5 @@ export async function participate({ courseId }: { courseId: number }) {
     throw new Error('Error creating participation.')
   }
 }
+
+// ini juga diubah buat nyesuain struktur schema participation yg baru ygy

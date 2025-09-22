@@ -8,18 +8,27 @@ interface VideoModuleProps {
   module: any
   participation: Participation
   onCompleted: (nextIndex: number) => void
+  totalModules: number
+  onParticipationUpdate: (participation: Participation) => void
 }
 
-export default function VideoModule({ module, participation, onCompleted }: VideoModuleProps) {
+export default function VideoModule({
+  module,
+  participation,
+  onCompleted,
+  totalModules,
+  onParticipationUpdate,
+}: VideoModuleProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   async function handleNextModule() {
     setLoading(true)
     try {
-      const updateParticipation = await markProgress(participation)
-      if (updateParticipation && updateParticipation.progress) {
-        onCompleted(updateParticipation.progress)
+      const updateParticipation = await markProgress(participation, totalModules)
+      if (updateParticipation) {
+        onParticipationUpdate(updateParticipation)
+        onCompleted(updateParticipation.currentModule ?? 0)
       } else {
         console.error('Failed to update participation progress')
         setError('Gagal memperbarui progres. Silakan coba lagi.')
