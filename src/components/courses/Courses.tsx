@@ -42,7 +42,7 @@ const features = [
 
 const Features = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 mt-14" id="courses">
+    <div className="min-h-screen flex items-center justify-center py-12" id="courses">
       <div>
         <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl md:leading-[1.2] mt-7 font-semibold tracking-tight text-center">
           Kelas dan Materi
