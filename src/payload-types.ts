@@ -180,21 +180,9 @@ export interface User {
  */
 export interface Tenant {
   id: number;
-  /**
-   * Example: "Frontend Development", "Backend Development"
-   */
   name: string;
-  /**
-   * Example: "frontend", "backend", "mobile"
-   */
   slug: string;
-  /**
-   * Optional custom subdomain: frontend.lms-ndaru.com
-   */
   domain?: string | null;
-  /**
-   * Brief description of this learning Path
-   */
   description?: string | null;
   updatedAt: string;
   createdAt: string;

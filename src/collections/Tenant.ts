@@ -2,6 +2,20 @@ import type { CollectionConfig } from 'payload'
 
 export const Tenant: CollectionConfig = {
   slug: 'tenants',
+  access: {
+    read: ({ req: { user } }) => {
+      return user?.collection === 'users'
+    },
+    create: ({ req: { user } }) => {
+      return user?.collection === 'users'
+    },
+    update: ({ req: { user } }) => {
+      return user?.collection === 'users'
+    },
+    delete: ({ req: { user } }) => {
+      return user?.collection === 'users'
+    },
+  },
   admin: {
     useAsTitle: 'name',
   },
@@ -15,9 +29,6 @@ export const Tenant: CollectionConfig = {
       type: 'text',
       required: true,
       label: 'Learning Path Name',
-      admin: {
-        description: 'Example: "Frontend Development", "Backend Development"',
-      },
     },
     {
       name: 'slug',
@@ -25,27 +36,24 @@ export const Tenant: CollectionConfig = {
       required: true,
       unique: true,
       label: 'URL Slug',
-      admin: {
-        description: 'Example: "frontend", "backend", "mobile"',
+      validate: (val: string) => {
+        if (!/^[a-z0-9-]+$/.test(val)) {
+          return 'Slug must contain only lowercase letters, numbers, and hyphens'
+        }
+        return true
       },
     },
     {
       name: 'domain',
       type: 'text',
       required: false,
-      label: 'Custom Subdomain',
-      admin: {
-        description: 'Optional custom subdomain: frontend.lms-ndaru.com',
-      },
+      label: 'Custom Domain',
     },
     {
       name: 'description',
       type: 'textarea',
       required: false,
-      label: 'Path Description',
-      admin: {
-        description: 'Brief description of this learning Path',
-      },
+      label: 'Learning Path Description',
     },
   ],
 }
