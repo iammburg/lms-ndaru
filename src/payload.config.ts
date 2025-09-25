@@ -6,6 +6,7 @@ import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 import { s3Storage } from '@payloadcms/storage-s3'
+import { multiTenantPlugin } from '@payloadcms/plugin-multi-tenant'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
@@ -13,6 +14,7 @@ import nodeMailerAdapter from './utils/nodeMailerAdapter'
 import { Customers } from './collections/Customer'
 import { Courses } from './collections/courses/Courses'
 import { Participation } from './collections/courses/Participation'
+import { Tenant } from './collections/Tenant'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -25,7 +27,7 @@ export default buildConfig({
     },
   },
   email: nodeMailerAdapter(),
-  collections: [Users, Media, Customers, Courses, Participation],
+  collections: [Users, Media, Customers, Courses, Participation, Tenant],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
@@ -54,6 +56,14 @@ export default buildConfig({
           secretAccessKey: process.env.S3_SECRET_KEY || '',
         },
         forcePathStyle: true,
+      },
+    }),
+    multiTenantPlugin({
+      collections: {
+        customers: {},
+        courses: {},
+        participation: {},
+        media: {},
       },
     }),
   ],

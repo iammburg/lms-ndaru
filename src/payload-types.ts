@@ -73,6 +73,7 @@ export interface Config {
     customers: Customer;
     courses: Course;
     participation: Participation;
+    tenants: Tenant;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -84,6 +85,7 @@ export interface Config {
     customers: CustomersSelect<false> | CustomersSelect<true>;
     courses: CoursesSelect<false> | CoursesSelect<true>;
     participation: ParticipationSelect<false> | ParticipationSelect<true>;
+    tenants: TenantsSelect<false> | TenantsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -148,6 +150,12 @@ export interface CustomerAuthOperations {
  */
 export interface User {
   id: number;
+  tenants?:
+    | {
+        tenant: number | Tenant;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -168,10 +176,36 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tenants".
+ */
+export interface Tenant {
+  id: number;
+  /**
+   * Example: "Frontend Development", "Backend Development"
+   */
+  name: string;
+  /**
+   * Example: "frontend", "backend", "mobile"
+   */
+  slug: string;
+  /**
+   * Optional custom subdomain: frontend.lms-ndaru.com
+   */
+  domain?: string | null;
+  /**
+   * Brief description of this learning Path
+   */
+  description?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
 export interface Media {
   id: number;
+  tenant?: (number | null) | Tenant;
   alt: string;
   prefix?: string | null;
   updatedAt: string;
@@ -192,6 +226,7 @@ export interface Media {
  */
 export interface Customer {
   id: number;
+  tenant?: (number | null) | Tenant;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -216,6 +251,7 @@ export interface Customer {
  */
 export interface Course {
   id: number;
+  tenant?: (number | null) | Tenant;
   title: string;
   description: string;
   image?: (number | null) | Media;
@@ -264,6 +300,7 @@ export interface Course {
  */
 export interface Participation {
   id: number;
+  tenant?: (number | null) | Tenant;
   customer: number | Customer;
   course: number | Course;
   currentModule?: number | null;
@@ -307,6 +344,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'participation';
         value: number | Participation;
+      } | null)
+    | ({
+        relationTo: 'tenants';
+        value: number | Tenant;
       } | null);
   globalSlug?: string | null;
   user:
@@ -365,6 +406,12 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  tenants?:
+    | T
+    | {
+        tenant?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -387,6 +434,7 @@ export interface UsersSelect<T extends boolean = true> {
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
+  tenant?: T;
   alt?: T;
   prefix?: T;
   updatedAt?: T;
@@ -406,6 +454,7 @@ export interface MediaSelect<T extends boolean = true> {
  * via the `definition` "customers_select".
  */
 export interface CustomersSelect<T extends boolean = true> {
+  tenant?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -428,6 +477,7 @@ export interface CustomersSelect<T extends boolean = true> {
  * via the `definition` "courses_select".
  */
 export interface CoursesSelect<T extends boolean = true> {
+  tenant?: T;
   title?: T;
   description?: T;
   image?: T;
@@ -479,12 +529,25 @@ export interface CoursesSelect<T extends boolean = true> {
  * via the `definition` "participation_select".
  */
 export interface ParticipationSelect<T extends boolean = true> {
+  tenant?: T;
   customer?: T;
   course?: T;
   currentModule?: T;
   completedModules?: T;
   highestUnlockedModule?: T;
   isCompleted?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tenants_select".
+ */
+export interface TenantsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  domain?: T;
+  description?: T;
   updatedAt?: T;
   createdAt?: T;
 }
