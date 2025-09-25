@@ -2,20 +2,20 @@ import type { CollectionConfig } from 'payload'
 
 export const Tenant: CollectionConfig = {
   slug: 'tenants',
-  access: {
-    read: ({ req: { user } }) => {
-      return user?.collection === 'users'
-    },
-    create: ({ req: { user } }) => {
-      return user?.collection === 'users'
-    },
-    update: ({ req: { user } }) => {
-      return user?.collection === 'users'
-    },
-    delete: ({ req: { user } }) => {
-      return user?.collection === 'users'
-    },
-  },
+  //   access: {
+  //     read: ({ req: { user } }) => {
+  //       return user?.collection === 'users'
+  //     },
+  //     create: ({ req: { user } }) => {
+  //       return user?.collection === 'users'
+  //     },
+  //     update: ({ req: { user } }) => {
+  //       return user?.collection === 'users'
+  //     },
+  //     delete: ({ req: { user } }) => {
+  //       return user?.collection === 'users'
+  //     },
+  //   },
   admin: {
     useAsTitle: 'name',
   },
