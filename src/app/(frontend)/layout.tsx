@@ -13,8 +13,8 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={montserrat.className}>
+    <html lang="en" suppressHydrationWarning className="scroll-smooth">
+      <body className={`${montserrat.className}`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
