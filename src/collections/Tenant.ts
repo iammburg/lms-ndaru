@@ -36,8 +36,8 @@ export const Tenant: CollectionConfig = {
       required: true,
       unique: true,
       label: 'URL Slug',
-      validate: (val: string) => {
-        if (!/^[a-z0-9-]+$/.test(val)) {
+      validate: (val: string | null | undefined) => {
+        if (!val || !/^[a-z0-9-]+$/.test(val)) {
           return 'Slug must contain only lowercase letters, numbers, and hyphens'
         }
         return true
