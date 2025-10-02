@@ -2,18 +2,16 @@ import Logos07Page from '../logos/LogoSection'
 
 const About = () => {
   return (
-    <div
-      className="relative flex items-start justify-center p-6 py-10 overflow-hidden mt-12 mb-14 "
-      id="about"
-    >
-      <div className="relative z-10 text-center max-w-3xl">
+    <div className="relative flex items-start justify-center py-12 overflow-hidden" id="about">
+      <div className="relative z-10 text-center max-w-7xl mx-auto w-full px-6">
         <h2 className="mt-6 text-xl sm:text-2xl md:text-3xl lg:text-4xl md:leading-[1.2] font-semibold tracking-tighter">
           Tentang LMS Ndaru
         </h2>
         <p className="mt-6 md:text-lg">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt
-          ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-          ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          LMS Ndaru adalah platform pembelajaran daring yang dirancang untuk membantu individu
+          belajar mengenai pemrograman dan teknologi informasi. Dengan berbagai kelas dan materi
+          yang disusun secara terstruktur, LMS Ndaru bertujuan untuk memberikan pengalaman belajar
+          yang menyenangkan dan efektif bagi para penggunanya.
         </p>
         {/* <div className="mt-12 flex items-center justify-center gap-4">
           <Button size="lg" className="rounded-full text-base">

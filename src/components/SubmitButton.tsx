@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react'
 import { Button } from '@/components/ui/button'
-import { AiOutlineLoading3Quarters } from 'react-icons/ai'
+import { LoaderCircle } from 'lucide-react'
 
 export default function SubmitButton({
   loading,
@@ -14,7 +14,7 @@ export default function SubmitButton({
       {text}
       {''}
       <div className="ml-2 flex items-center">
-        <AiOutlineLoading3Quarters className={`animate-spin ${loading ? 'block' : 'hidden'}`} />
+        <LoaderCircle className={`animate-spin ${loading ? 'block' : 'hidden'}`} />
       </div>
     </Button>
   )

@@ -18,9 +18,30 @@ export const Participation: CollectionConfig = {
       required: true,
     },
     {
-      name: 'progress',
-      label: 'Progress',
+      name: 'currentModule',
+      label: 'Current Module',
       type: 'number',
+      defaultValue: 0,
+    },
+    {
+      name: 'completedModules',
+      label: 'Completed Modules',
+      type: 'json',
+      defaultValue: [],
+    },
+    {
+      name: 'highestUnlockedModule',
+      label: 'Highest Unlocked Module',
+      type: 'number',
+      defaultValue: 0,
+    },
+    {
+      name: 'isCompleted',
+      label: 'Course Completed',
+      type: 'checkbox',
+      defaultValue: false,
     },
   ],
 }
+
+// kita ngubah schema table participation ygy

@@ -5,7 +5,7 @@ import { Participation } from '@/payload-types'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 import { useState, MouseEvent } from 'react'
-import { AiFillPlayCircle, AiOutlineExclamationCircle, AiOutlineLoading } from 'react-icons/ai'
+import { LoaderCircle, Play, TriangleAlert } from 'lucide-react'
 
 export default function StartCourseButton({ courseId }: { courseId: number }) {
   const router = useRouter()
@@ -36,29 +36,29 @@ export default function StartCourseButton({ courseId }: { courseId: number }) {
   const isError = status === 'error'
 
   return (
-    <div className="mt-6">
+    <div>
+      {isError && error && <p className="mb-2 text-sm text-destructive">{error}</p>}
       <Button
         onClick={handleStartCourse}
         disabled={isLoading}
         variant={isError ? 'destructive' : 'default'}
         size="lg"
-        className="w-full"
+        className="w-full cursor-pointer"
       >
         {isLoading ? (
           <>
-            <AiOutlineLoading className="animate-spin text-xl" /> Memproses
+            <LoaderCircle className="animate-spin text-xl" /> Memproses
           </>
         ) : isError ? (
           <>
-            <AiOutlineExclamationCircle className="text-xl" /> Terjadi Kesalahan
+            <TriangleAlert className="text-xl" /> Terjadi Kesalahan
           </>
         ) : (
           <>
-            <AiFillPlayCircle className="text-xl" /> Mulai Kursus
+            <Play className="text-xl" /> Klik di sini untuk memulai course
           </>
         )}
       </Button>
-      {isError && error && <p className="mt-2 text-sm text-destructive">{error}</p>}
     </div>
   )
 }

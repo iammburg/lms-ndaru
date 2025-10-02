@@ -69,7 +69,7 @@ const Testimonial = () => (
       </h2>
       <div className="max-w-(--breakpoint-xl) mx-auto columns-1 md:columns-2 lg:columns-3 gap-8">
         {testimonials.map((testimonial) => (
-          <div key={testimonial.id} className="mb-8 bg-accent rounded-xl p-6 break-inside-avoid">
+          <div key={testimonial.id} className="mb-8 bg-accent rounded-md p-6 break-inside-avoid">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <Avatar className="size-10">

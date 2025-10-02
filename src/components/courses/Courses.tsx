@@ -42,14 +42,14 @@ const features = [
 
 const Features = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 mt-14" id="courses">
+    <div className="min-h-screen flex items-center justify-center py-12" id="courses">
       <div>
         <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl md:leading-[1.2] mt-7 font-semibold tracking-tight text-center">
           Kelas dan Materi
         </h2>
         <div className="mt-10 sm:mt-16 grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-(--breakpoint-lg) mx-auto px-6">
           {features.map((feature) => (
-            <div key={feature.title} className="flex flex-col border rounded-xl py-6 px-5">
+            <div key={feature.title} className="flex flex-col border rounded-md py-6 px-5">
               <div className="mb-4 h-10 w-10 flex items-center justify-center bg-muted rounded-full">
                 <feature.icon className="size-5" />
               </div>
