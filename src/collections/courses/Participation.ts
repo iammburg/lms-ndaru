@@ -2,6 +2,9 @@ import { CollectionConfig } from 'payload'
 
 export const Participation: CollectionConfig = {
   slug: 'participation',
+  admin: {
+    group: 'Course Management',
+  },
   fields: [
     {
       name: 'customer',

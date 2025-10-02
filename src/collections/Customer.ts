@@ -4,6 +4,7 @@ export const Customers: CollectionConfig = {
   slug: 'customers',
   admin: {
     useAsTitle: 'email',
+    group: 'User Management',
   },
   access: {
     create: () => true,

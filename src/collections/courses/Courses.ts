@@ -21,6 +21,7 @@ export const Courses: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'title',
+    group: 'Course Management',
   },
   fields: [
     {
