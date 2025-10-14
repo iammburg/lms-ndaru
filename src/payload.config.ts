@@ -1,5 +1,6 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
+import { multiTenantPlugin } from '@payloadcms/plugin-multi-tenant'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
@@ -13,6 +14,8 @@ import nodeMailerAdapter from './utils/nodeMailerAdapter'
 import { Customers } from './collections/Customer'
 import { Courses } from './collections/courses/Courses'
 import { Participation } from './collections/courses/Participation'
+import { Tenants } from './collections/Tenants'
+import { TenantAdmins } from './collections/TenantAdmins'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -23,9 +26,13 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    // Allow both users and tenant-admins to access admin panel
+    meta: {
+      titleSuffix: '- BiBu Belajar LMS',
+    },
   },
   email: nodeMailerAdapter(),
-  collections: [Users, Media, Customers, Courses, Participation],
+  collections: [Users, Media, Customers, Courses, Participation, Tenants, TenantAdmins],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
@@ -39,6 +46,36 @@ export default buildConfig({
   sharp,
   plugins: [
     payloadCloudPlugin(),
+    multiTenantPlugin({
+      tenantsSlug: 'tenants',
+      collections: {
+        courses: {
+          useBaseFilter: false,    // ✅ CHANGED: Manual filtering through access control
+          customTenantField: true, // ✅ CHANGED: Manual tenant field management
+        },
+        participation: {
+          useBaseFilter: false,    // ✅ CHANGED: Manual filtering through access control
+          customTenantField: true, // ✅ CHANGED: Manual tenant field management
+        },
+        customers: {
+          // Customers dapat exist tanpa tenant (main app) atau dengan tenant
+          useBaseFilter: false,     // ❌ Tidak auto-filter - allow global customers
+          customTenantField: true,  // ✅ Handle tenant field manual dengan required: false
+        },
+        media: {
+          useBaseFilter: true,    // ✅ Terisolasi per tenant
+          customTenantField: false, // ✅ Satu media = satu tenant
+        },
+        tenantAdmins: {
+          useBaseFilter: true,    // ✅ Terisolasi per tenant
+          customTenantField: false, // ✅ Satu admin = satu tenant
+        },
+      },
+      userHasAccessToAllTenants: (user) => {
+        return user?.collection === 'users'
+      },
+      useTenantsCollectionAccess: false,
+    }),
     s3Storage({
       collections: {
         media: {

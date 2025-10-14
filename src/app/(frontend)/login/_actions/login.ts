@@ -4,6 +4,7 @@ import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { cookies } from 'next/headers'
 import { Customer } from '@/payload-types'
+import { detectTenantFromDomain } from '@/lib/tenant'
 
 interface LoginParams {
   email: string
@@ -24,6 +25,9 @@ export type Result = {
 export async function login({ email, password }: LoginParams): Promise<LoginResponse> {
   const payload = await getPayload({ config })
   try {
+    // Get current tenant context
+    const currentTenantId = await detectTenantFromDomain()
+
     const result: Result = await payload.login({
       collection: 'customers',
       data: {
@@ -32,7 +36,23 @@ export async function login({ email, password }: LoginParams): Promise<LoginResp
       },
     })
 
-    if (result.token) {
+    if (result.token && result.user) {
+      // Validate tenant access
+      if (currentTenantId) {
+        // User is trying to login to a tenant domain
+        const userTenant = typeof result.user.tenant === 'object'
+          ? result.user.tenant?.id
+          : result.user.tenant
+
+        if (String(userTenant) !== currentTenantId) {
+          return {
+            success: false,
+            error: 'You don\'t have access to this tenant. Please contact your administrator.'
+          }
+        }
+      }
+      // For main app (no tenant), allow login regardless of user's tenant
+
       const cookieStore = await cookies()
       cookieStore.set('payload-token', result.token, {
         httpOnly: true,

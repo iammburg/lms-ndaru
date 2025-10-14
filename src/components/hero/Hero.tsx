@@ -12,7 +12,7 @@ const Hero = () => {
         <div className="grid lg:grid-cols-2 gap-6 lg:gap-14 items-center">
           <div className="">
             <h1 className="text-4xl max-w-2xl mx-auto lg:mx-0 md:text-5xl lg:text-[2.75rem] xl:text-[3.25rem] font-semibold leading-[1.2]! tracking-tighter">
-              Ngoding itu menyenangkan bukan? <span className="text-rose-700">Bukan!</span> 😅
+              Belajar Materi Sekolah Jadi Lebih <span className="text-cyan-700 hover:text-cyan-200 ease-in-out">Mudah</span> dan <span className="text-cyan-700">Menyenangkan</span>
             </h1>
 
             <p className="text-lg sm:text-xl mt-3 mb-6 max-w-2xl mx-auto lg:mx-0">

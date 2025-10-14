@@ -4,8 +4,8 @@ import { ThemeProvider } from '@/components/theme-provider'
 
 export const metadata = {
   description:
-    'Welcome to LMS Ndaru, your comprehensive learning management system designed to enhance educational experiences through seamless course management, interactive learning tools, and robust analytics.',
-  title: 'LMS Ndaru - Learning Management System for Modern Education',
+    'Welcome to BiBuBelajar, your comprehensive learning management system designed to enhance educational experiences through seamless course management, interactive learning tools, and robust analytics.',
+  title: 'BiBuBelajar - Learning Management System (LMS) for Modern Education',
   icons: {
     icon: '/assets/icon.ico',
   },
