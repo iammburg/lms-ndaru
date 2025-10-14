@@ -5,8 +5,8 @@ import { getUser } from '../(authenticated)/_actions/getUser'
 import { redirect } from 'next/navigation'
 
 export const metadata = {
-  description: 'Signup page for LMS Ndaru',
-  title: 'Signup Page - LMS Ndaru',
+  description: 'Signup page for BiBuBelajar LMS',
+  title: 'Signup Page - BiBuBelajar LMS',
 }
 
 export default async function SignupLayout(props: { children: React.ReactNode }) {

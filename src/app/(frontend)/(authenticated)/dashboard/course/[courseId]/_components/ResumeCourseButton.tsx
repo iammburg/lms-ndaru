@@ -7,7 +7,7 @@ import { Play, Clock, Calendar } from 'lucide-react'
 export default function ResumeCourseButton({ participation }: { participation: Participation }) {
   const course: Course = participation.course as Course
   const courseLenght = course.curriculum?.length ?? 0
-  let progress = participation.progress ?? 0
+  let progress = participation.highestUnlockedModule ?? 0
   progress = progress + 1
   const progressPercentage = Math.round((progress / (courseLenght || 1)) * 100)
 

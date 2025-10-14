@@ -29,6 +29,17 @@ export const NavMenu = (props: ComponentProps<typeof NavigationMenu>) => {
           </NavigationMenuLink>
         </NavigationMenuItem>
         <NavigationMenuItem>
+          <NavigationMenuLink
+            asChild
+            className={cn(
+              'default-styles',
+              pathname === '/dashboard/create-tenant' && 'bg-accent text-accent-foreground',
+            )}
+          >
+            <Link href="/dashboard/create-tenant">Create Tenant</Link>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
           <NavigationMenuLink asChild>
             <Link href="#">Courses</Link>
           </NavigationMenuLink>

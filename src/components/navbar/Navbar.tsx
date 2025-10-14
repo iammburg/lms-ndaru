@@ -23,7 +23,7 @@ export default async function Navbar() {
           <Link href="/">
             <div className="flex items-center space-x-2 font-bold text-lg">
               <Logo />
-              <span>LMS Ndaru</span>
+              <span>BiBuBelajar LMS</span>
             </div>
           </Link>
 

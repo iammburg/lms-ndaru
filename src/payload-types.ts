@@ -65,6 +65,7 @@ export interface Config {
   auth: {
     users: UserAuthOperations;
     customers: CustomerAuthOperations;
+    tenantAdmins: TenantAdminAuthOperations;
   };
   blocks: {};
   collections: {
@@ -73,6 +74,8 @@ export interface Config {
     customers: Customer;
     courses: Course;
     participation: Participation;
+    tenants: Tenant;
+    tenantAdmins: TenantAdmin;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -84,6 +87,8 @@ export interface Config {
     customers: CustomersSelect<false> | CustomersSelect<true>;
     courses: CoursesSelect<false> | CoursesSelect<true>;
     participation: ParticipationSelect<false> | ParticipationSelect<true>;
+    tenants: TenantsSelect<false> | TenantsSelect<true>;
+    tenantAdmins: TenantAdminsSelect<false> | TenantAdminsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -100,6 +105,9 @@ export interface Config {
       })
     | (Customer & {
         collection: 'customers';
+      })
+    | (TenantAdmin & {
+        collection: 'tenantAdmins';
       });
   jobs: {
     tasks: unknown;
@@ -142,12 +150,109 @@ export interface CustomerAuthOperations {
     password: string;
   };
 }
+export interface TenantAdminAuthOperations {
+  forgotPassword: {
+    email: string;
+    password: string;
+  };
+  login: {
+    email: string;
+    password: string;
+  };
+  registerFirstUser: {
+    email: string;
+    password: string;
+  };
+  unlock: {
+    email: string;
+    password: string;
+  };
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
   id: number;
+  tenants?:
+    | {
+        tenant: number | Tenant;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tenants".
+ */
+export interface Tenant {
+  id: number;
+  /**
+   * Customer who created this tenant
+   */
+  createdBy: number | Customer;
+  name: string;
+  /**
+   * Unique identifier for subdomain (e.g., "acme" → acme.bibubelajar.com)
+   */
+  slug: string;
+  status: 'active' | 'inactive' | 'suspended';
+  /**
+   * Auto-generated subdomain URL
+   */
+  subdomain?: string | null;
+  /**
+   * Primary contact email for this tenant
+   */
+  contactEmail?: string | null;
+  /**
+   * Brief description or notes about this tenant
+   */
+  description?: string | null;
+  settings?: {
+    /**
+     * Hex color code for tenant branding (e.g., #1a73e8)
+     */
+    brandColor?: string | null;
+    /**
+     * Upload a logo for this tenant
+     */
+    logo?: (number | null) | Media;
+    /**
+     * Maximum number of users allowed for this tenant
+     */
+    maxUsers?: number | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "customers".
+ */
+export interface Customer {
+  id: number;
+  /**
+   * Tenant assignment (optional for main app users)
+   */
+  tenant?: (number | null) | Tenant;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -172,6 +277,7 @@ export interface User {
  */
 export interface Media {
   id: number;
+  tenant?: (number | null) | Tenant;
   alt: string;
   prefix?: string | null;
   updatedAt: string;
@@ -188,34 +294,14 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "customers".
- */
-export interface Customer {
-  id: number;
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
-    | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
-      }[]
-    | null;
-  password?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "courses".
  */
 export interface Course {
   id: number;
+  /**
+   * Tenant this course belongs to
+   */
+  tenant: number | Tenant;
   title: string;
   description: string;
   image?: (number | null) | Media;
@@ -264,6 +350,10 @@ export interface Course {
  */
 export interface Participation {
   id: number;
+  /**
+   * Tenant this participation belongs to
+   */
+  tenant: number | Tenant;
   customer: number | Customer;
   course: number | Course;
   currentModule?: number | null;
@@ -280,6 +370,46 @@ export interface Participation {
   isCompleted?: boolean | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * Administrators for specific tenants
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tenantAdmins".
+ */
+export interface TenantAdmin {
+  id: number;
+  tenant?: (number | null) | Tenant;
+  /**
+   * Role within the tenant
+   */
+  role: 'admin' | 'manager';
+  /**
+   * Whether this admin account is active
+   */
+  isActive: boolean;
+  permissions?: {
+    canManageUsers?: boolean | null;
+    canManageCourses?: boolean | null;
+    canViewAnalytics?: boolean | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -307,6 +437,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'participation';
         value: number | Participation;
+      } | null)
+    | ({
+        relationTo: 'tenants';
+        value: number | Tenant;
+      } | null)
+    | ({
+        relationTo: 'tenantAdmins';
+        value: number | TenantAdmin;
       } | null);
   globalSlug?: string | null;
   user:
@@ -317,6 +455,10 @@ export interface PayloadLockedDocument {
     | {
         relationTo: 'customers';
         value: number | Customer;
+      }
+    | {
+        relationTo: 'tenantAdmins';
+        value: number | TenantAdmin;
       };
   updatedAt: string;
   createdAt: string;
@@ -335,6 +477,10 @@ export interface PayloadPreference {
     | {
         relationTo: 'customers';
         value: number | Customer;
+      }
+    | {
+        relationTo: 'tenantAdmins';
+        value: number | TenantAdmin;
       };
   key?: string | null;
   value?:
@@ -365,6 +511,12 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  tenants?:
+    | T
+    | {
+        tenant?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -387,6 +539,7 @@ export interface UsersSelect<T extends boolean = true> {
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
+  tenant?: T;
   alt?: T;
   prefix?: T;
   updatedAt?: T;
@@ -406,6 +559,7 @@ export interface MediaSelect<T extends boolean = true> {
  * via the `definition` "customers_select".
  */
 export interface CustomersSelect<T extends boolean = true> {
+  tenant?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -428,6 +582,7 @@ export interface CustomersSelect<T extends boolean = true> {
  * via the `definition` "courses_select".
  */
 export interface CoursesSelect<T extends boolean = true> {
+  tenant?: T;
   title?: T;
   description?: T;
   image?: T;
@@ -479,6 +634,7 @@ export interface CoursesSelect<T extends boolean = true> {
  * via the `definition` "participation_select".
  */
 export interface ParticipationSelect<T extends boolean = true> {
+  tenant?: T;
   customer?: T;
   course?: T;
   currentModule?: T;
@@ -487,6 +643,60 @@ export interface ParticipationSelect<T extends boolean = true> {
   isCompleted?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tenants_select".
+ */
+export interface TenantsSelect<T extends boolean = true> {
+  createdBy?: T;
+  name?: T;
+  slug?: T;
+  status?: T;
+  subdomain?: T;
+  contactEmail?: T;
+  description?: T;
+  settings?:
+    | T
+    | {
+        brandColor?: T;
+        logo?: T;
+        maxUsers?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tenantAdmins_select".
+ */
+export interface TenantAdminsSelect<T extends boolean = true> {
+  tenant?: T;
+  role?: T;
+  isActive?: T;
+  permissions?:
+    | T
+    | {
+        canManageUsers?: T;
+        canManageCourses?: T;
+        canViewAnalytics?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
+  sessions?:
+    | T
+    | {
+        id?: T;
+        createdAt?: T;
+        expiresAt?: T;
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

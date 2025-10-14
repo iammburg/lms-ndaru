@@ -15,6 +15,12 @@ const page = async () => {
   // get the user
   const user = await getUser()
 
+  // Debug: Check user tenant value
+  console.log('User object:', JSON.stringify(user, null, 2))
+  console.log('User tenant value:', user?.tenant)
+  console.log('User tenant type:', typeof user?.tenant)
+  console.log('User tenant ID:', typeof user?.tenant === 'object' ? user?.tenant?.id : user?.tenant)
+
   // get courses
   let courses: Course[] = []
 
@@ -26,8 +32,9 @@ const page = async () => {
       user: user,
     })
     courses = coursesRes.docs
+    console.log('Courses found:', courses.length)
   } catch (e) {
-    console.log(e)
+    console.log('Error fetching courses:', e)
   }
 
   let participations: Participation[] | null = []
@@ -53,7 +60,7 @@ const page = async () => {
     <div className="flex flex-col mx-auto w-full max-w-5xl p-3 sm:p-4 lg:p-6 gap-4">
       <div className="flex flex-col">
         <div className="text-lg lg:text-xl font-bold">
-          Selamat datang, <span className="">{user?.email}!</span>
+          Selamat datang di {typeof user?.tenant === 'object' && user?.tenant !== null ? user.tenant.name : 'BiBuBelajar'}, <span className="">{user?.email}!</span>
         </div>
         <p className="text-sm lg:text-base text-muted-foreground mt-1">
           Kamu dapat melihat semua course yang tersedia untuk dipelajari di halaman ini
@@ -74,25 +81,32 @@ const page = async () => {
       <div className="text-base lg:text-lg text-cyan-500 mt-4 lg:mt-6">Semua Course</div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4">
         <Suspense fallback={<div>Loading...</div>}>
-          {courses.map((course) => {
-            return (
-              <Link
-                href={`/dashboard/course/${course.id}`}
-                key={course.id}
-                className="flex flex-col cursor-pointer relative border rounded-md border-gray-700 hover:border-white transition ease-in-out duration-100 overflow-hidden"
-              >
-                <div className="relative w-full aspect-video border rounded-md overflow-hidden">
-                  {course.image && typeof course.image === 'object' && course.image.url ? (
-                    <Image alt={`${course.title} thumbnail`} src={course.image.url} fill={true} />
-                  ) : (
-                    <div className="w-full h-full bg-gray-800 flex items-center justify-center text-gray-400">
-                      No Image
-                    </div>
-                  )}
-                </div>
-              </Link>
-            )
-          })}
+          {courses != null && courses.length > 0 ? (
+            courses.map((course) => {
+              return (
+                <Link
+                  href={`/dashboard/course/${course.id}`}
+                  key={course.id}
+                  className="flex flex-col cursor-pointer relative border rounded-md border-gray-700 hover:border-white transition ease-in-out duration-100 overflow-hidden"
+                >
+                  <div className="relative w-full aspect-video border rounded-md overflow-hidden">
+                    {course.image && typeof course.image === 'object' && course.image.url ? (
+                      <Image alt={`${course.title} thumbnail`} src={course.image.url} fill={true} />
+                    ) : (
+                      <div className="w-full h-full bg-gray-800 flex items-center justify-center text-gray-400">
+                        No Image
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-3 flex-1 flex items-center text-sm font-medium">
+                    {course.title}
+                  </div>
+                </Link>
+              )
+            })
+          ) : (
+            <div className="text-sm">Belum ada Course yang tersedia.</div>
+          )}
         </Suspense>
       </div>
     </div>

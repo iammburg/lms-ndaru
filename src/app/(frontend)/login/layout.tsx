@@ -1,12 +1,12 @@
 import React from 'react'
 import '../styles.css'
 import { ThemeProvider } from '@/components/theme-provider'
-import { getUser } from '../(authenticated)/_actions/getUser' 
+import { getUser } from '../(authenticated)/_actions/getUser'
 import { redirect } from 'next/navigation'
 
 export const metadata = {
-  description: 'Login page for LMS Ndaru',
-  title: 'Login Page - LMS Ndaru',
+  description: 'Login page for BiBuBelajar LMS',
+  title: 'Login Page - BiBuBelajar LMS',
 }
 
 export default async function LoginLayout(props: { children: React.ReactNode }) {
