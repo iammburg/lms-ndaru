@@ -20,7 +20,7 @@ export const TenantAdmins: CollectionConfig = {
             // Super admin can read all
             if (req.user?.collection === 'users') return true
             // Tenant admin can only read their own record
-            if (req.user?.collection === 'tenant-admins') {
+            if (req.user?.collection === 'tenantAdmins') {
                 return { id: { equals: req.user.id } }
             }
             return false
@@ -29,7 +29,7 @@ export const TenantAdmins: CollectionConfig = {
             // Super admin can update all
             if (req.user?.collection === 'users') return true
             // Tenant admin can update limited fields of their own record
-            if (req.user?.collection === 'tenant-admins') {
+            if (req.user?.collection === 'tenantAdmins') {
                 return { id: { equals: req.user.id } }
             }
             return false

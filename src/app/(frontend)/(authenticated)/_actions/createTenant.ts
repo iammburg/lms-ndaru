@@ -20,9 +20,9 @@ export async function createTenant(data: CreateTenantData) {
     }
 
     // Only customers can create tenants via self-service
-    if (user.collection !== 'customers') {
-        throw new Error('Only customers can create tenants via self-service')
-    }
+    // if (user.collection !== 'customers') {
+    //     throw new Error('Only customers can create tenants via self-service')
+    // }
 
     try {
         // Check if slug is already taken
