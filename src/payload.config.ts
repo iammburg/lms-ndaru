@@ -26,7 +26,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
     meta: {
-      titleSuffix: '- BiBu Belajar LMS',
+      titleSuffix: '- BiBuBelajar LMS',
     },
   },
   email: nodeMailerAdapter(),
