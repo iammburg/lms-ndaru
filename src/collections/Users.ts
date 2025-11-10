@@ -1,44 +1,58 @@
 import type { CollectionConfig, Access, Where } from 'payload'
 
 const readAccess: Access = ({ req }) => {
-  // Super admin can read all users
-  if (req.user?.collection === 'users' && req.user?.role === 'super-admin') {
+  if (req.user?.collection === 'users' && (req.user as any).role === 'super-admin') {
     return true
   }
 
-  // Tenant admin can only read themselves and other admins in their tenant
-  if (req.user?.collection === 'users' && req.user?.role === 'tenant-admin' && req.user?.id) {
-    const tenantId = typeof req.user.tenant === 'object' ? req.user.tenant?.id : req.user.tenant
+  if (req.user?.collection === 'users' && (req.user as any).role === 'tenant-admin') {
+    const userTenant = (req.user as any).tenant
+    const tenantId = typeof userTenant === 'object' ? userTenant?.id : userTenant
 
     if (!tenantId) {
-      return { id: { equals: req.user.id } } as Where // Fallback: only self
+      return false
     }
 
-    return {
-      or: [
-        { id: { equals: req.user.id } }, // Own record
-        {
-          tenant: { equals: tenantId },
-          role: { equals: 'tenant-admin' },
-        }, // Same tenant admins
-      ],
-    } as Where
+    const whereClause = {
+      tenant: { equals: tenantId },
+    }
+    return whereClause
+  }
+
+  if (req.user?.collection === 'customers' && req.user?.id) {
+    const whereClause = {
+      id: { equals: req.user.id },
+    }
+    return whereClause
   }
 
   return false
 }
 
 const updateAccess: Access = ({ req }) => {
-  // Super admin can update all users
-  if (req.user?.collection === 'users' && req.user?.role === 'super-admin') {
+  if (req.user?.collection === 'users' && (req.user as any).role === 'super-admin') {
     return true
   }
 
-  // Tenant admin can only update their own record (limited fields)
-  if (req.user?.collection === 'users' && req.user?.role === 'tenant-admin' && req.user?.id) {
-    return {
+  if (req.user?.collection === 'users' && (req.user as any).role === 'tenant-admin') {
+    const userTenant = (req.user as any).tenant
+    const tenantId = typeof userTenant === 'object' ? userTenant?.id : userTenant
+
+    if (!tenantId) {
+      return false
+    }
+
+    const whereClause = {
+      tenant: { equals: tenantId },
+    }
+    return whereClause
+  }
+
+  if (req.user?.collection === 'customers' && req.user?.id) {
+    const whereClause = {
       id: { equals: req.user.id },
-    } as Where
+    }
+    return whereClause
   }
 
   return false
@@ -59,19 +73,15 @@ export const Users: CollectionConfig = {
     lockTime: 600 * 1000, // 10 minutes
   },
   access: {
-    // Only super-admins can create new admin users manually
-    // Or auto-created when customer creates tenant
     create: ({ req }) => {
       return req.user?.collection === 'users' && req.user?.role === 'super-admin'
     },
     read: readAccess,
     update: updateAccess,
     delete: ({ req }) => {
-      // Only super admin can delete admin users
       return req.user?.collection === 'users' && req.user?.role === 'super-admin'
     },
     admin: ({ req }) => {
-      // Both super-admin and tenant-admin can access admin panel
       return req.user?.collection === 'users' &&
         (req.user?.role === 'super-admin' || req.user?.role === 'tenant-admin')
     }
@@ -97,7 +107,6 @@ export const Users: CollectionConfig = {
         position: 'sidebar',
       },
       access: {
-        // Only super admin can change roles
         update: ({ req }) => req.user?.collection === 'users' && req.user?.role === 'super-admin',
       }
     },
@@ -105,25 +114,22 @@ export const Users: CollectionConfig = {
       name: 'tenant',
       type: 'relationship',
       relationTo: 'tenants',
-      required: false, // Super admin doesn't need tenant
+      required: false,
       admin: {
         description: 'Tenant assignment (only for tenant-admin role)',
         position: 'sidebar',
-        condition: (data) => data?.role === 'tenant-admin', // Only show for tenant-admin
+        condition: (data) => data?.role === 'tenant-admin',
       },
       validate: (value: unknown, { data }: { data: Record<string, unknown> }) => {
-        // Tenant required for tenant-admin
         if (data?.role === 'tenant-admin' && !value) {
           return 'Tenant is required for tenant-admin role'
         }
-        // Super admin shouldn't have tenant
         if (data?.role === 'super-admin' && value) {
           return 'Super admin should not be assigned to a tenant'
         }
         return true
       },
       access: {
-        // Only super admin can change tenant assignment
         update: ({ req }) => req.user?.collection === 'users' && req.user?.role === 'super-admin',
       }
     },
@@ -145,7 +151,6 @@ export const Users: CollectionConfig = {
         position: 'sidebar',
       },
       access: {
-        // Only super admin can activate/deactivate
         update: ({ req }) => req.user?.collection === 'users' && req.user?.role === 'super-admin',
       }
     },
@@ -153,11 +158,15 @@ export const Users: CollectionConfig = {
   hooks: {
     beforeChange: [
       async ({ data }) => {
-        // Ensure super-admin doesn't have tenant
         if (data?.role === 'super-admin') {
           data.tenant = null
         }
         return data
+      }
+    ],
+    afterRead: [
+      async ({ doc, req }) => {
+        return doc
       }
     ]
   },

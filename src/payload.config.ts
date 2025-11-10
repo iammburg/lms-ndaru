@@ -48,26 +48,21 @@ export default buildConfig({
       tenantsSlug: 'tenants',
       collections: {
         courses: {
-          useBaseFilter: false,    // ✅ CHANGED: Manual filtering through access control
-          customTenantField: true, // ✅ CHANGED: Manual tenant field management
+          useBaseFilter: false,
+          customTenantField: true,
         },
         participation: {
-          useBaseFilter: false,    // ✅ CHANGED: Manual filtering through access control
-          customTenantField: true, // ✅ CHANGED: Manual tenant field management
-        },
-        customers: {
-          // Customers dapat exist tanpa tenant (main app) atau dengan tenant
-          useBaseFilter: false,     // ❌ Tidak auto-filter - allow global customers
-          customTenantField: true,  // ✅ Handle tenant field manual dengan required: false
+          useBaseFilter: false,
+          customTenantField: true,
         },
         media: {
-          useBaseFilter: true,    // ✅ Terisolasi per tenant
-          customTenantField: false, // ✅ Satu media = satu tenant
+          useBaseFilter: true,
+          customTenantField: false,
         },
       },
       userHasAccessToAllTenants: (user) => {
-        // Super admin has access to all tenants
-        return user?.collection === 'users' && user?.role === 'super-admin'
+        const hasAccess = user?.collection === 'users' && user?.role === 'super-admin'
+        return hasAccess
       },
       useTenantsCollectionAccess: false,
     }),
