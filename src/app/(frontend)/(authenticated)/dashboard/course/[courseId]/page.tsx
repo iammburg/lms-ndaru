@@ -8,8 +8,6 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import {
   Card,
-  CardAction,
-  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -17,8 +15,9 @@ import {
 import StartCourseButton from './_components/StartCourseButton'
 import ResumeCourseButton from './_components/ResumeCourseButton'
 import { Separator } from '@/components/ui/separator'
+import Image from 'next/image'
 
-const CoursePage = async ({ params }: { params: { courseId: string } }) => {
+const CoursePage = async ({ params }: { params: Promise<{ courseId: string }> }) => {
   const { courseId } = await params
   const payload = await getPayload({ config: configPromise })
   const user = await getUser()
@@ -71,7 +70,7 @@ const CoursePage = async ({ params }: { params: { courseId: string } }) => {
         </Button>
       </Link>
 
-      <img
+      <Image
         className="object-cover object-center aspect-video overflow-hidden w-full rounded-md border border-gray-700"
         src={(course.image as Media | null)?.url ?? 'https://placehold.co/600x400.png'}
         alt={`${course.title} thumbnail`}

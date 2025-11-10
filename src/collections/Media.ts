@@ -7,33 +7,58 @@ export const Media: CollectionConfig = {
   },
   access: {
     create: ({ req }) => {
-      // Allow super admin to create media (global or tenant-specific)
-      if (req.user?.collection === 'users') return true
-      // Allow customers to create media within their tenant
-      if (req.user?.collection === 'customers') return true
-      // Allow tenant admins to create media within their tenant
-      if (req.user?.collection === 'tenantAdmins') return true
+      // Super admin can create media (global or tenant-specific)
+      if (req.user?.collection === 'users' && req.user?.role === 'super-admin') {
+        return true
+      }
+      // Tenant admin can create media within their tenant
+      if (req.user?.collection === 'users' && req.user?.role === 'tenant-admin') {
+        return true
+      }
+      // Customers can create media within their tenant
+      if (req.user?.collection === 'customers') {
+        return true
+      }
       return false
     },
     read: ({ req }) => {
       // Super admin can read all media
-      if (req.user?.collection === 'users') return true
-      // Others can read media (will be filtered by tenant automatically)
-      return true
+      if (req.user?.collection === 'users' && req.user?.role === 'super-admin') {
+        return true
+      }
+
+      // Tenant admin can read media in their tenant (filtered by multi-tenant plugin)
+      if (req.user?.collection === 'users' && req.user?.role === 'tenant-admin') {
+        return true
+      }
+
+      // Customers can read media (filtered by multi-tenant plugin)
+      if (req.user?.collection === 'customers') {
+        return true
+      }
+
+      return false
     },
     update: ({ req }) => {
       // Super admin can update all media
-      if (req.user?.collection === 'users') return true
-      // Tenant admins can update media in their tenant
-      if (req.user?.collection === 'tenantAdmins') return true
-      // Customers generally shouldn't update media after upload
+      if (req.user?.collection === 'users' && req.user?.role === 'super-admin') {
+        return true
+      }
+      // Tenant admin can update media in their tenant
+      if (req.user?.collection === 'users' && req.user?.role === 'tenant-admin') {
+        return true
+      }
       return false
     },
     delete: ({ req }) => {
       // Super admin can delete any media
-      if (req.user?.collection === 'users') return true
-      // Tenant admins can delete media in their tenant
-      if (req.user?.collection === 'tenantAdmins') return true
+      if (req.user?.collection === 'users' && req.user?.role === 'super-admin') {
+        return true
+      }
+      // Tenant admin can delete media in their tenant
+      if (req.user?.collection === 'users' && req.user?.role === 'tenant-admin') {
+        return true
+      }
       return false
     },
   },

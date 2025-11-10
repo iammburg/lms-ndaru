@@ -17,7 +17,12 @@ import { Label } from '@/components/ui/label'
 import SubmitButton from '@/components/SubmitButton'
 import { login, LoginResponse } from '../_actions/login'
 
-export default function LoginForm(): ReactElement {
+interface LoginFormProps {
+  tenantId?: number | string
+  tenantName?: string
+}
+
+export default function LoginForm({ tenantId, tenantName }: LoginFormProps): ReactElement {
   const [isPending, setIsPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
@@ -45,8 +50,14 @@ export default function LoginForm(): ReactElement {
     <div className="flex min-h-screen items-center justify-center">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle>Login to your account</CardTitle>
-          <CardDescription>Enter your email below to login to your account</CardDescription>
+          <CardTitle>
+            {tenantName ? `Login ke ${tenantName}` : 'Login to your account'}
+          </CardTitle>
+          <CardDescription>
+            {tenantName
+              ? `Masukkan email Anda untuk login ke ${tenantName}`
+              : 'Enter your email below to login to your account'}
+          </CardDescription>
           <CardAction>
             <Button variant="link">
               <Link href="/signup">Sign Up</Link>
@@ -67,7 +78,7 @@ export default function LoginForm(): ReactElement {
                     href="#"
                     className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
                   >
-                    Forgot your password?
+                    Lupa password?
                   </a>
                 </div>
                 <Input id="password" type="password" name="password" required />

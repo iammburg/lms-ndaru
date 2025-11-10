@@ -54,7 +54,7 @@ export default async function MyTenantsList() {
                 </CardHeader>
                 <CardContent>
                     <p className="text-sm text-muted-foreground">
-                        You haven't created any tenants yet. Create your first tenant to get started!
+                        You haven&apos;t created any tenants yet. Create your first tenant to get started!
                     </p>
                 </CardContent>
             </Card>

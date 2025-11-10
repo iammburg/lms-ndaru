@@ -2,8 +2,8 @@ import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'
 
 export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
-   CREATE TYPE "public"."enum_tenants_status" AS ENUM('active', 'inactive', 'suspended');
-  CREATE TYPE "public"."enum_tenant_admins_role" AS ENUM('admin', 'manager');
+   CREATE TYPE "public"."enum_users_role" AS ENUM('super-admin', 'tenant-admin');
+  CREATE TYPE "public"."enum_tenants_status" AS ENUM('active', 'inactive', 'suspended');
   CREATE TABLE "users_tenants" (
   	"_order" integer NOT NULL,
   	"_parent_id" integer NOT NULL,
@@ -21,6 +21,10 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   
   CREATE TABLE "users" (
   	"id" serial PRIMARY KEY NOT NULL,
+  	"role" "enum_users_role" DEFAULT 'tenant-admin' NOT NULL,
+  	"tenant_id" integer,
+  	"name" varchar,
+  	"is_active" boolean DEFAULT true NOT NULL,
   	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
   	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
   	"email" varchar NOT NULL,
@@ -118,7 +122,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   
   CREATE TABLE "courses" (
   	"id" serial PRIMARY KEY NOT NULL,
-  	"tenant_id" integer,
+  	"tenant_id" integer NOT NULL,
   	"title" varchar NOT NULL,
   	"description" varchar NOT NULL,
   	"image_id" integer,
@@ -128,7 +132,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   
   CREATE TABLE "participation" (
   	"id" serial PRIMARY KEY NOT NULL,
-  	"tenant_id" integer,
+  	"tenant_id" integer NOT NULL,
   	"customer_id" integer NOT NULL,
   	"course_id" integer NOT NULL,
   	"current_module" numeric DEFAULT 0,
@@ -155,33 +159,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
   );
   
-  CREATE TABLE "tenant_admins_sessions" (
-  	"_order" integer NOT NULL,
-  	"_parent_id" integer NOT NULL,
-  	"id" varchar PRIMARY KEY NOT NULL,
-  	"created_at" timestamp(3) with time zone,
-  	"expires_at" timestamp(3) with time zone NOT NULL
-  );
-  
-  CREATE TABLE "tenant_admins" (
-  	"id" serial PRIMARY KEY NOT NULL,
-  	"tenant_id" integer NOT NULL,
-  	"role" "enum_tenant_admins_role" DEFAULT 'admin' NOT NULL,
-  	"is_active" boolean DEFAULT true NOT NULL,
-  	"permissions_can_manage_users" boolean DEFAULT true,
-  	"permissions_can_manage_courses" boolean DEFAULT true,
-  	"permissions_can_view_analytics" boolean DEFAULT true,
-  	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
-  	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
-  	"email" varchar NOT NULL,
-  	"reset_password_token" varchar,
-  	"reset_password_expiration" timestamp(3) with time zone,
-  	"salt" varchar,
-  	"hash" varchar,
-  	"login_attempts" numeric DEFAULT 0,
-  	"lock_until" timestamp(3) with time zone
-  );
-  
   CREATE TABLE "payload_locked_documents" (
   	"id" serial PRIMARY KEY NOT NULL,
   	"global_slug" varchar,
@@ -199,8 +176,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"customers_id" integer,
   	"courses_id" integer,
   	"participation_id" integer,
-  	"tenants_id" integer,
-  	"tenant_admins_id" integer
+  	"tenants_id" integer
   );
   
   CREATE TABLE "payload_preferences" (
@@ -217,8 +193,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"parent_id" integer NOT NULL,
   	"path" varchar NOT NULL,
   	"users_id" integer,
-  	"customers_id" integer,
-  	"tenant_admins_id" integer
+  	"customers_id" integer
   );
   
   CREATE TABLE "payload_migrations" (
@@ -232,6 +207,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "users_tenants" ADD CONSTRAINT "users_tenants_tenant_id_tenants_id_fk" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "users_tenants" ADD CONSTRAINT "users_tenants_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "users_sessions" ADD CONSTRAINT "users_sessions_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "users" ADD CONSTRAINT "users_tenant_id_tenants_id_fk" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "media" ADD CONSTRAINT "media_tenant_id_tenants_id_fk" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "customers_sessions" ADD CONSTRAINT "customers_sessions_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."customers"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "customers" ADD CONSTRAINT "customers_tenant_id_tenants_id_fk" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants"("id") ON DELETE set null ON UPDATE no action;
@@ -247,8 +223,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "participation" ADD CONSTRAINT "participation_course_id_courses_id_fk" FOREIGN KEY ("course_id") REFERENCES "public"."courses"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "tenants" ADD CONSTRAINT "tenants_created_by_id_customers_id_fk" FOREIGN KEY ("created_by_id") REFERENCES "public"."customers"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "tenants" ADD CONSTRAINT "tenants_settings_logo_id_media_id_fk" FOREIGN KEY ("settings_logo_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
-  ALTER TABLE "tenant_admins_sessions" ADD CONSTRAINT "tenant_admins_sessions_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."tenant_admins"("id") ON DELETE cascade ON UPDATE no action;
-  ALTER TABLE "tenant_admins" ADD CONSTRAINT "tenant_admins_tenant_id_tenants_id_fk" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_parent_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."payload_locked_documents"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_users_fk" FOREIGN KEY ("users_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_media_fk" FOREIGN KEY ("media_id") REFERENCES "public"."media"("id") ON DELETE cascade ON UPDATE no action;
@@ -256,16 +230,15 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_courses_fk" FOREIGN KEY ("courses_id") REFERENCES "public"."courses"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_participation_fk" FOREIGN KEY ("participation_id") REFERENCES "public"."participation"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_tenants_fk" FOREIGN KEY ("tenants_id") REFERENCES "public"."tenants"("id") ON DELETE cascade ON UPDATE no action;
-  ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_tenant_admins_fk" FOREIGN KEY ("tenant_admins_id") REFERENCES "public"."tenant_admins"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_preferences_rels" ADD CONSTRAINT "payload_preferences_rels_parent_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."payload_preferences"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_preferences_rels" ADD CONSTRAINT "payload_preferences_rels_users_fk" FOREIGN KEY ("users_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_preferences_rels" ADD CONSTRAINT "payload_preferences_rels_customers_fk" FOREIGN KEY ("customers_id") REFERENCES "public"."customers"("id") ON DELETE cascade ON UPDATE no action;
-  ALTER TABLE "payload_preferences_rels" ADD CONSTRAINT "payload_preferences_rels_tenant_admins_fk" FOREIGN KEY ("tenant_admins_id") REFERENCES "public"."tenant_admins"("id") ON DELETE cascade ON UPDATE no action;
   CREATE INDEX "users_tenants_order_idx" ON "users_tenants" USING btree ("_order");
   CREATE INDEX "users_tenants_parent_id_idx" ON "users_tenants" USING btree ("_parent_id");
   CREATE INDEX "users_tenants_tenant_idx" ON "users_tenants" USING btree ("tenant_id");
   CREATE INDEX "users_sessions_order_idx" ON "users_sessions" USING btree ("_order");
   CREATE INDEX "users_sessions_parent_id_idx" ON "users_sessions" USING btree ("_parent_id");
+  CREATE INDEX "users_tenant_idx" ON "users" USING btree ("tenant_id");
   CREATE INDEX "users_updated_at_idx" ON "users" USING btree ("updated_at");
   CREATE INDEX "users_created_at_idx" ON "users" USING btree ("created_at");
   CREATE UNIQUE INDEX "users_email_idx" ON "users" USING btree ("email");
@@ -306,12 +279,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "tenants_settings_settings_logo_idx" ON "tenants" USING btree ("settings_logo_id");
   CREATE INDEX "tenants_updated_at_idx" ON "tenants" USING btree ("updated_at");
   CREATE INDEX "tenants_created_at_idx" ON "tenants" USING btree ("created_at");
-  CREATE INDEX "tenant_admins_sessions_order_idx" ON "tenant_admins_sessions" USING btree ("_order");
-  CREATE INDEX "tenant_admins_sessions_parent_id_idx" ON "tenant_admins_sessions" USING btree ("_parent_id");
-  CREATE INDEX "tenant_admins_tenant_idx" ON "tenant_admins" USING btree ("tenant_id");
-  CREATE INDEX "tenant_admins_updated_at_idx" ON "tenant_admins" USING btree ("updated_at");
-  CREATE INDEX "tenant_admins_created_at_idx" ON "tenant_admins" USING btree ("created_at");
-  CREATE UNIQUE INDEX "tenant_admins_email_idx" ON "tenant_admins" USING btree ("email");
   CREATE INDEX "payload_locked_documents_global_slug_idx" ON "payload_locked_documents" USING btree ("global_slug");
   CREATE INDEX "payload_locked_documents_updated_at_idx" ON "payload_locked_documents" USING btree ("updated_at");
   CREATE INDEX "payload_locked_documents_created_at_idx" ON "payload_locked_documents" USING btree ("created_at");
@@ -324,7 +291,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "payload_locked_documents_rels_courses_id_idx" ON "payload_locked_documents_rels" USING btree ("courses_id");
   CREATE INDEX "payload_locked_documents_rels_participation_id_idx" ON "payload_locked_documents_rels" USING btree ("participation_id");
   CREATE INDEX "payload_locked_documents_rels_tenants_id_idx" ON "payload_locked_documents_rels" USING btree ("tenants_id");
-  CREATE INDEX "payload_locked_documents_rels_tenant_admins_id_idx" ON "payload_locked_documents_rels" USING btree ("tenant_admins_id");
   CREATE INDEX "payload_preferences_key_idx" ON "payload_preferences" USING btree ("key");
   CREATE INDEX "payload_preferences_updated_at_idx" ON "payload_preferences" USING btree ("updated_at");
   CREATE INDEX "payload_preferences_created_at_idx" ON "payload_preferences" USING btree ("created_at");
@@ -333,7 +299,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "payload_preferences_rels_path_idx" ON "payload_preferences_rels" USING btree ("path");
   CREATE INDEX "payload_preferences_rels_users_id_idx" ON "payload_preferences_rels" USING btree ("users_id");
   CREATE INDEX "payload_preferences_rels_customers_id_idx" ON "payload_preferences_rels" USING btree ("customers_id");
-  CREATE INDEX "payload_preferences_rels_tenant_admins_id_idx" ON "payload_preferences_rels" USING btree ("tenant_admins_id");
   CREATE INDEX "payload_migrations_updated_at_idx" ON "payload_migrations" USING btree ("updated_at");
   CREATE INDEX "payload_migrations_created_at_idx" ON "payload_migrations" USING btree ("created_at");`)
 }
@@ -354,13 +319,11 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TABLE "courses" CASCADE;
   DROP TABLE "participation" CASCADE;
   DROP TABLE "tenants" CASCADE;
-  DROP TABLE "tenant_admins_sessions" CASCADE;
-  DROP TABLE "tenant_admins" CASCADE;
   DROP TABLE "payload_locked_documents" CASCADE;
   DROP TABLE "payload_locked_documents_rels" CASCADE;
   DROP TABLE "payload_preferences" CASCADE;
   DROP TABLE "payload_preferences_rels" CASCADE;
   DROP TABLE "payload_migrations" CASCADE;
-  DROP TYPE "public"."enum_tenants_status";
-  DROP TYPE "public"."enum_tenant_admins_role";`)
+  DROP TYPE "public"."enum_users_role";
+  DROP TYPE "public"."enum_tenants_status";`)
 }

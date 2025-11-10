@@ -34,7 +34,7 @@ export default function CreateTenantPage() {
             <div className="mt-8 p-6 bg-blue-50 rounded-lg">
                 <h3 className="text-base lg:text-lg font-semibold mb-2">What happens after creating a tenant?</h3>
                 <ul className="text-sm text-muted-foreground space-y-2">
-                    <li>• You'll get your own subdomain (e.g., yourcompany.bibubelajar.com)</li>
+                    <li>• You&apos;ll get your own subdomain (e.g., yourcompany.bibubelajar.com)</li>
                     <li>• A tenant admin account will be automatically created for you</li>
                     <li>• You can manage courses, users, and content independently</li>
                     <li>• Your data is completely isolated from other tenants</li>

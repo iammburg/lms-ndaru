@@ -8,14 +8,16 @@ export const Courses: CollectionConfig = {
   access: {
     read: ({ req: { user } }) => {
       // Super admin can read all courses
-      if (user?.collection === 'users') return true
+      if (user?.collection === 'users' && user?.role === 'super-admin') {
+        return true
+      }
 
       // Tenant admin can read courses in their tenant
-      if (user?.collection === 'tenantAdmins') {
+      if (user?.collection === 'users' && user?.role === 'tenant-admin') {
         const tenantId = typeof user.tenant === 'object' ? user.tenant?.id : user.tenant
         if (tenantId) {
           return {
-            tenant: { equals: tenantId }
+            tenant: { equals: tenantId },
           }
         }
       }
@@ -25,7 +27,7 @@ export const Courses: CollectionConfig = {
         const tenantId = typeof user.tenant === 'object' ? user.tenant?.id : user.tenant
         if (tenantId) {
           return {
-            tenant: { equals: tenantId }
+            tenant: { equals: tenantId },
           }
         }
       }
@@ -35,18 +37,21 @@ export const Courses: CollectionConfig = {
     },
     create: ({ req: { user } }) => {
       // Only super admin and tenant admin can create courses
-      return user?.collection === 'users' || user?.collection === 'tenantAdmins'
+      return user?.collection === 'users' &&
+        (user?.role === 'super-admin' || user?.role === 'tenant-admin')
     },
     update: ({ req: { user } }) => {
-      // Only super admin can update all courses
-      if (user?.collection === 'users') return true
+      // Super admin can update all courses
+      if (user?.collection === 'users' && user?.role === 'super-admin') {
+        return true
+      }
 
       // Tenant admin can update courses in their tenant
-      if (user?.collection === 'tenantAdmins') {
+      if (user?.collection === 'users' && user?.role === 'tenant-admin') {
         const tenantId = typeof user.tenant === 'object' ? user.tenant?.id : user.tenant
         if (tenantId) {
           return {
-            tenant: { equals: tenantId }
+            tenant: { equals: tenantId },
           }
         }
       }
@@ -54,15 +59,17 @@ export const Courses: CollectionConfig = {
       return false
     },
     delete: ({ req: { user } }) => {
-      // Only super admin can delete all courses
-      if (user?.collection === 'users') return true
+      // Super admin can delete all courses
+      if (user?.collection === 'users' && user?.role === 'super-admin') {
+        return true
+      }
 
       // Tenant admin can delete courses in their tenant
-      if (user?.collection === 'tenantAdmins') {
+      if (user?.collection === 'users' && user?.role === 'tenant-admin') {
         const tenantId = typeof user.tenant === 'object' ? user.tenant?.id : user.tenant
         if (tenantId) {
           return {
-            tenant: { equals: tenantId }
+            tenant: { equals: tenantId },
           }
         }
       }

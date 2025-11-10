@@ -14,7 +14,9 @@ export default function CreateTenantForm() {
     const [isSuccess, setIsSuccess] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [tenantUrl, setTenantUrl] = useState<string | null>(null)
-    const router = useRouter()
+    const [adminPanelUrl, setAdminPanelUrl] = useState<string | null>(null)
+    const [adminCredentials, setAdminCredentials] = useState<{ email: string, password: string } | null>(null)
+    // const router = useRouter()
 
     const handleSubmit = async (formData: FormData) => {
         setIsSubmitting(true)
@@ -26,6 +28,9 @@ export default function CreateTenantForm() {
                 slug: formData.get('slug') as string,
                 description: formData.get('description') as string,
                 contactEmail: formData.get('contactEmail') as string,
+                adminEmail: formData.get('adminEmail') as string,
+                adminPassword: formData.get('adminPassword') as string,
+                adminName: formData.get('adminName') as string,
             }
 
             // Basic validation
@@ -41,6 +46,15 @@ export default function CreateTenantForm() {
 
             const result = await createTenant(data)
             setTenantUrl(result.subdomainUrl)
+            setAdminPanelUrl(result.adminPanelUrl || null)
+
+            if (result.adminUser) {
+                setAdminCredentials({
+                    email: result.adminUser.email,
+                    password: result.adminUser.defaultPassword
+                })
+            }
+
             setIsSuccess(true)
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Something went wrong')
@@ -53,15 +67,15 @@ export default function CreateTenantForm() {
         return (
             <Card className="w-full max-w-md mx-auto">
                 <CardHeader>
-                    <CardTitle className="text-green-600">Tenant Created Successfully!</CardTitle>
+                    <CardTitle className="text-green-600">🎉 Tenant Created Successfully!</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <p className="text-sm text-muted-foreground">
                         Your tenant has been created and is ready to use.
                     </p>
                     {tenantUrl && (
-                        <div className="p-4 bg-green-50 rounded-lg">
-                            <p className="text-sm font-medium">Your tenant URL:</p>
+                        <div className="p-4 bg-blue-50 rounded-lg space-y-2">
+                            <p className="text-sm font-medium">Tenant URL:</p>
                             <a
                                 href={tenantUrl}
                                 target="_blank"
@@ -72,23 +86,50 @@ export default function CreateTenantForm() {
                             </a>
                         </div>
                     )}
+                    {adminPanelUrl && (
+                        <div className="p-4 bg-purple-50 rounded-lg space-y-2">
+                            <p className="text-sm font-medium">Admin Panel URL:</p>
+                            <a
+                                href={adminPanelUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-purple-600 hover:text-purple-800 underline text-sm break-all"
+                            >
+                                {adminPanelUrl}
+                            </a>
+                        </div>
+                    )}
+                    {adminCredentials && (
+                        <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg space-y-2">
+                            <p className="text-sm font-bold text-yellow-800">⚠️ Admin Credentials (Save this!)</p>
+                            <div className="space-y-1 text-sm">
+                                <p><span className="font-medium">Email:</span> {adminCredentials.email}</p>
+                                <p><span className="font-medium">Password:</span> {adminCredentials.password}</p>
+                            </div>
+                            <p className="text-xs text-yellow-700 mt-2">
+                                Please save these credentials securely. You can change the password after first login.
+                            </p>
+                        </div>
+                    )}
                     <div className="flex gap-2">
                         <Button
                             onClick={() => {
                                 setIsSuccess(false)
                                 setTenantUrl(null)
+                                setAdminPanelUrl(null)
+                                setAdminCredentials(null)
                             }}
                             variant="outline"
                             className="flex-1"
                         >
                             Create Another
                         </Button>
-                        {tenantUrl && (
+                        {adminPanelUrl && (
                             <Button
-                                onClick={() => window.open(tenantUrl, '_blank')}
+                                onClick={() => window.open(adminPanelUrl, '_blank')}
                                 className="flex-1"
                             >
-                                Visit Tenant
+                                Go to Admin Panel
                             </Button>
                         )}
                     </div>
@@ -163,6 +204,52 @@ export default function CreateTenantForm() {
                         <p className="text-xs text-muted-foreground">
                             Leave blank to use your current email
                         </p>
+                    </div>
+
+                    <div className="border-t pt-4 space-y-4">
+                        <h3 className="font-medium text-sm">Admin Account Settings</h3>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="adminName">Admin Name</Label>
+                            <Input
+                                id="adminName"
+                                name="adminName"
+                                type="text"
+                                placeholder="Admin Name"
+                                disabled={isSubmitting}
+                            />
+                            <p className="text-xs text-muted-foreground">
+                                Leave blank to auto-generate
+                            </p>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="adminEmail">Admin Email</Label>
+                            <Input
+                                id="adminEmail"
+                                name="adminEmail"
+                                type="email"
+                                placeholder="admin@mycompany.com"
+                                disabled={isSubmitting}
+                            />
+                            <p className="text-xs text-muted-foreground">
+                                Leave blank to use contact email
+                            </p>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="adminPassword">Admin Password</Label>
+                            <Input
+                                id="adminPassword"
+                                name="adminPassword"
+                                type="password"
+                                placeholder="Secure password"
+                                disabled={isSubmitting}
+                            />
+                            <p className="text-xs text-muted-foreground">
+                                Leave blank to auto-generate secure password
+                            </p>
+                        </div>
                     </div>
 
                     {error && (

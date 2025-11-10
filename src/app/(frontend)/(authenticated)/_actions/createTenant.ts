@@ -9,6 +9,9 @@ interface CreateTenantData {
     slug: string
     description?: string
     contactEmail?: string
+    adminEmail?: string
+    adminPassword?: string
+    adminName?: string
 }
 
 export async function createTenant(data: CreateTenantData) {
@@ -18,11 +21,6 @@ export async function createTenant(data: CreateTenantData) {
     if (!user) {
         throw new Error('You must be logged in to create a tenant')
     }
-
-    // Only customers can create tenants via self-service
-    // if (user.collection !== 'customers') {
-    //     throw new Error('Only customers can create tenants via self-service')
-    // }
 
     try {
         // Check if slug is already taken
@@ -49,19 +47,53 @@ export async function createTenant(data: CreateTenantData) {
                 status: 'active',
                 createdBy: user.id,
                 settings: {
-                    maxUsers: 50, // Default for self-service
+                    maxUsers: 100, // Default for self-service
                 }
             },
         })
 
-        console.log(`Tenant "${tenant.name}" created successfully`)
+        console.log(`✅ Tenant "${tenant.name}" created successfully with ID: ${tenant.id}`)
 
-        return {
-            tenant,
-            subdomainUrl: `https://${tenant.slug}.bibubelajar.com`,
+        // Auto-create tenant admin user
+        try {
+            const adminUser = await payload.create({
+                collection: 'users',
+                data: {
+                    email: data.adminEmail || user.email,
+                    password: data.adminPassword || `${data.slug}Admin123!`, // Default password
+                    name: data.adminName || `${data.name} Admin`,
+                    role: 'tenant-admin',
+                    tenant: tenant.id,
+                    isActive: true,
+                },
+                overrideAccess: true, // Bypass access control for auto-creation
+            })
+
+            console.log(`✅ Tenant admin created: ${adminUser.email} for tenant: ${tenant.name}`)
+
+            return {
+                tenant,
+                adminUser: {
+                    email: adminUser.email,
+                    defaultPassword: data.adminPassword || `${data.slug}Admin123!`,
+                },
+                subdomainUrl: `https://${tenant.slug}.bibubelajar.com`,
+                adminPanelUrl: `https://${tenant.slug}.bibubelajar.com/admin`,
+            }
+        } catch (adminError) {
+            console.error('⚠️ Error creating tenant admin:', adminError)
+
+            // Tenant created but admin failed - still return success
+            return {
+                tenant,
+                adminUser: null,
+                subdomainUrl: `https://${tenant.slug}.bibubelajar.com`,
+                adminPanelUrl: `https://${tenant.slug}.bibubelajar.com/admin`,
+                warning: 'Tenant created but admin user creation failed. Please create admin manually.',
+            }
         }
     } catch (error) {
-        console.error('Error creating tenant:', error)
+        console.error('❌ Error creating tenant:', error)
         throw new Error(error instanceof Error ? error.message : 'Failed to create tenant')
     }
 }

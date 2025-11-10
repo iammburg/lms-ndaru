@@ -17,7 +17,12 @@ import { Label } from '@/components/ui/label'
 import SubmitButton from '@/components/SubmitButton'
 import { signup, SignupResponse } from '../_actions/signup'
 
-export default function SignupForm(): ReactElement {
+interface SignupFormProps {
+  tenantId?: number | string
+  tenantName?: string
+}
+
+export default function SignupForm({ tenantId, tenantName }: SignupFormProps): ReactElement {
   const [isPending, setIsPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
@@ -54,8 +59,14 @@ export default function SignupForm(): ReactElement {
     <div className="flex min-h-screen items-center justify-center">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle>Sign up to create new account</CardTitle>
-          <CardDescription>Enter your email below to create new account</CardDescription>
+          <CardTitle>
+            {tenantName ? `Daftar di ${tenantName}` : 'Daftar untuk akun baru'}
+          </CardTitle>
+          <CardDescription>
+            {tenantName
+              ? `Buat akun baru untuk mengakses ${tenantName}`
+              : 'Masukkan email di bawah untuk membuat akun baru'}
+          </CardDescription>
           <CardAction>
             <Button variant="link">
               <Link href="/login">Login</Link>
@@ -77,7 +88,7 @@ export default function SignupForm(): ReactElement {
               </div>
               <div className="grid gap-2">
                 <div className="flex items-center">
-                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                  <Label htmlFor="confirmPassword">Konfirmasi Password</Label>
                 </div>
                 <Input id="confirmPassword" type="password" name="confirmPassword" required />
               </div>

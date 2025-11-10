@@ -12,12 +12,17 @@ export async function participate({ courseId }: { courseId: number }) {
     throw new Error('User not found')
   }
 
+  if (!user.tenant) {
+    throw new Error('User tenant not found')
+  }
+
   try {
     const createdParticipation = await payload.create({
       collection: 'participation',
       data: {
         course: courseId,
         customer: user.id,
+        tenant: typeof user.tenant === 'object' ? user.tenant.id : user.tenant,
         currentModule: 0,
         completedModules: [],
         highestUnlockedModule: 0,
@@ -29,7 +34,7 @@ export async function participate({ courseId }: { courseId: number }) {
 
     return createdParticipation
   } catch (error) {
-    console.error('Error creating participation.')
+    console.error('Error creating participation.', error)
     throw new Error('Error creating participation.')
   }
 }

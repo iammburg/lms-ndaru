@@ -11,7 +11,7 @@ import CourseViewer from './_components/CourseViewer'
 export default async function ParticipationPage({
   params,
 }: {
-  params: { participationId: string }
+  params: Promise<{ participationId: string }>
 }) {
   const payload = await getPayload({ config: configPromise })
   const { participationId } = await params

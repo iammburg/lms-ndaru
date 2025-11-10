@@ -1,4 +1,62 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, Access, Where } from 'payload'
+
+const readAccess: Access = ({ req }) => {
+  // Super admin can read all customers
+  if (req.user?.collection === 'users' && req.user?.role === 'super-admin') {
+    return true
+  }
+
+  // Tenant admin can only read customers in their tenant
+  if (req.user?.collection === 'users' && req.user?.role === 'tenant-admin') {
+    const tenantId = typeof req.user.tenant === 'object' ? req.user.tenant?.id : req.user.tenant
+
+    if (!tenantId) {
+      return false // No access if no tenant
+    }
+
+    return {
+      tenant: { equals: tenantId },
+    } as Where
+  }
+
+  // Customers can read their own data
+  if (req.user?.collection === 'customers' && req.user?.id) {
+    return {
+      id: { equals: req.user.id },
+    } as Where
+  }
+
+  return false
+}
+
+const updateAccess: Access = ({ req }) => {
+  // Super admin can update all customers
+  if (req.user?.collection === 'users' && req.user?.role === 'super-admin') {
+    return true
+  }
+
+  // Tenant admin can update customers in their tenant
+  if (req.user?.collection === 'users' && req.user?.role === 'tenant-admin') {
+    const tenantId = typeof req.user.tenant === 'object' ? req.user.tenant?.id : req.user.tenant
+
+    if (!tenantId) {
+      return false
+    }
+
+    return {
+      tenant: { equals: tenantId },
+    } as Where
+  }
+
+  // Customers can update their own data
+  if (req.user?.collection === 'customers' && req.user?.id) {
+    return {
+      id: { equals: req.user.id },
+    } as Where
+  }
+
+  return false
+}
 
 export const Customers: CollectionConfig = {
   slug: 'customers',
@@ -8,33 +66,12 @@ export const Customers: CollectionConfig = {
   },
   access: {
     create: () => true,
-    read: ({ req }) => {
-      // Super admin can read all customers
-      if (req.user?.collection === 'users') return true
-
-      // Customers can read their own data
-      if (req.user?.collection === 'customers') {
-        return {
-          id: { equals: req.user.id }
-        }
-      }
-
-      return false
+    read: readAccess,
+    update: updateAccess,
+    delete: ({ req }) => {
+      // Only super admin can delete customers
+      return req.user?.collection === 'users' && req.user?.role === 'super-admin'
     },
-    update: ({ req }) => {
-      // Super admin can update all customers
-      if (req.user?.collection === 'users') return true
-
-      // Customers can update their own data
-      if (req.user?.collection === 'customers') {
-        return {
-          id: { equals: req.user.id }
-        }
-      }
-
-      return false
-    },
-    delete: ({ req }) => req.user?.collection === 'users',
   },
   auth: true,
   fields: [

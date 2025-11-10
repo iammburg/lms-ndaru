@@ -2,8 +2,7 @@ import { Participation } from '@/payload-types'
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import NextButton from './NextButton'
@@ -61,11 +60,11 @@ export default function QuizModule({
 
   function checkAnswer(questionIndex: number) {
     let correct = true
-    let length = module.questions[questionIndex].answers.length
+    const length = module.questions[questionIndex].answers.length
 
     for (let i = 0; i < length; i++) {
-      let expectedValue = module.questions[questionIndex].answers[i].correct ? true : false
-      let userValue = userAnswers[questionIndex]?.[i] || false
+      const expectedValue = module.questions[questionIndex].answers[i].correct ? true : false
+      const userValue = userAnswers[questionIndex]?.[i] || false
 
       if (expectedValue !== userValue) {
         correct = false
@@ -145,11 +144,10 @@ export default function QuizModule({
 
       {message && (
         <Card
-          className={`py-2 ${
-            allAnswerCorrect
-              ? 'border-green-500 bg-green-50 dark:bg-green-950/20'
-              : 'border-red-500 bg-red-50 dark:bg-red-950/20'
-          }`}
+          className={`py-2 ${allAnswerCorrect
+            ? 'border-green-500 bg-green-50 dark:bg-green-950/20'
+            : 'border-red-500 bg-red-50 dark:bg-red-950/20'
+            }`}
         >
           <CardContent>
             <div className="flex items-center gap-3">
@@ -159,11 +157,10 @@ export default function QuizModule({
                 <XCircle className="size-4 text-red-600" />
               )}
               <p
-                className={`text-sm font-medium ${
-                  allAnswerCorrect
-                    ? 'text-green-700 dark:text-green-300'
-                    : 'text-red-700 dark:text-red-300'
-                }`}
+                className={`text-sm font-medium ${allAnswerCorrect
+                  ? 'text-green-700 dark:text-green-300'
+                  : 'text-red-700 dark:text-red-300'
+                  }`}
               >
                 {message}
               </p>

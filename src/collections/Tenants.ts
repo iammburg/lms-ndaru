@@ -1,4 +1,62 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, Access, Where } from 'payload'
+
+const readAccess: Access = ({ req }) => {
+  // Super admin can read all tenants
+  if (req.user?.collection === 'users' && req.user?.role === 'super-admin') {
+    return true
+  }
+
+  // Tenant admin can only read their own tenant
+  if (req.user?.collection === 'users' && req.user?.role === 'tenant-admin') {
+    const tenantId = typeof req.user.tenant === 'object' ? req.user.tenant?.id : req.user.tenant
+
+    if (!tenantId) {
+      return false
+    }
+
+    return {
+      id: { equals: tenantId },
+    } as Where
+  }
+
+  // Customers can only read tenants they created
+  if (req.user?.collection === 'customers' && req.user?.id) {
+    return {
+      createdBy: { equals: req.user.id },
+    } as Where
+  }
+
+  return false
+}
+
+const updateAccess: Access = ({ req }) => {
+  // Super admin can update all tenants
+  if (req.user?.collection === 'users' && req.user?.role === 'super-admin') {
+    return true
+  }
+
+  // Tenant admin can update their own tenant (limited fields)
+  if (req.user?.collection === 'users' && req.user?.role === 'tenant-admin') {
+    const tenantId = typeof req.user.tenant === 'object' ? req.user.tenant?.id : req.user.tenant
+
+    if (!tenantId) {
+      return false
+    }
+
+    return {
+      id: { equals: tenantId },
+    } as Where
+  }
+
+  // Customers can update tenants they created
+  if (req.user?.collection === 'customers' && req.user?.id) {
+    return {
+      createdBy: { equals: req.user.id },
+    } as Where
+  }
+
+  return false
+}
 
 export const Tenants: CollectionConfig = {
   slug: 'tenants',
@@ -10,33 +68,14 @@ export const Tenants: CollectionConfig = {
   access: {
     // Super admin can create tenants, customers can create their own
     create: ({ req }) => {
-      return req.user?.collection === 'users' || req.user?.collection === 'customers'
+      return (req.user?.collection === 'users' && req.user?.role === 'super-admin') ||
+        req.user?.collection === 'customers'
     },
-    read: ({ req }) => {
-      // Super admin can read all
-      if (req.user?.collection === 'users') return true
-      // Customers can only read tenants they created
-      if (req.user?.collection === 'customers') {
-        return {
-          createdBy: { equals: req.user.id }
-        }
-      }
-      return false
-    },
-    update: ({ req }) => {
-      // Super admin can update all
-      if (req.user?.collection === 'users') return true
-      // Customers can update tenants they created
-      if (req.user?.collection === 'customers') {
-        return {
-          createdBy: { equals: req.user.id }
-        }
-      }
-      return false
-    },
+    read: readAccess,
+    update: updateAccess,
     delete: ({ req }) => {
       // Only super admin can delete tenants
-      return req.user?.collection === 'users'
+      return req.user?.collection === 'users' && req.user?.role === 'super-admin'
     },
   },
   fields: [
@@ -70,7 +109,7 @@ export const Tenants: CollectionConfig = {
       admin: {
         description: 'Unique identifier for subdomain (e.g., "acme" → acme.bibubelajar.com)',
       },
-      validate: (value: any) => {
+      validate: (value: unknown) => {
         if (!value) return 'Slug is required'
 
         const stringValue = String(value)
@@ -170,47 +209,5 @@ export const Tenants: CollectionConfig = {
       ],
     },
   ],
-  hooks: {
-    beforeChange: [
-      async ({ data, req, operation }) => {
-        // Auto-assign createdBy on create
-        if (operation === 'create' && req.user?.collection === 'customers') {
-          data.createdBy = req.user.id
-        }
-        return data
-      }
-    ],
-    afterChange: [
-      async ({ doc, req, operation }) => {
-        // Create tenant admin after tenant creation
-        if (operation === 'create' && req.user?.collection === 'customers' && doc.createdBy) {
-          try {
-            await req.payload.create({
-              collection: 'tenantAdmins',
-              data: {
-                email: req.user.email,
-                password: 'temp-password-' + Math.random().toString(36).substring(7), // Temporary password
-                tenant: doc.id,
-                role: 'admin',
-                isActive: true,
-                permissions: {
-                  canManageUsers: true,
-                  canManageCourses: true,
-                  canViewAnalytics: true,
-                }
-              }
-            })
-
-            console.log(`Tenant admin created for tenant: ${doc.name}`)
-
-            // TODO: Send email with tenant admin credentials
-
-          } catch (error) {
-            console.error('Failed to create tenant admin:', error)
-          }
-        }
-      }
-    ]
-  },
   timestamps: true,
 }

@@ -1,5 +1,4 @@
 'use server'
-import { headers as getHeaders } from 'next/headers.js'
 import { getPayload } from 'payload'
 import React, { Suspense } from 'react'
 import configPromise from '@payload-config'
@@ -15,7 +14,6 @@ const page = async () => {
   // get the user
   const user = await getUser()
 
-  // Debug: Check user tenant value
   console.log('User object:', JSON.stringify(user, null, 2))
   console.log('User tenant value:', user?.tenant)
   console.log('User tenant type:', typeof user?.tenant)
@@ -25,7 +23,7 @@ const page = async () => {
   let courses: Course[] = []
 
   try {
-    let coursesRes = await payload.find({
+    const coursesRes = await payload.find({
       collection: 'courses',
       limit: 10,
       overrideAccess: false,
@@ -40,7 +38,7 @@ const page = async () => {
   let participations: Participation[] | null = []
 
   try {
-    let participationsRes = await payload.find({
+    const participationsRes = await payload.find({
       collection: 'participation',
       where: {
         customer: {

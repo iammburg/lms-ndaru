@@ -15,7 +15,6 @@ import { Customers } from './collections/Customer'
 import { Courses } from './collections/courses/Courses'
 import { Participation } from './collections/courses/Participation'
 import { Tenants } from './collections/Tenants'
-import { TenantAdmins } from './collections/TenantAdmins'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -26,13 +25,12 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
-    // Allow both users and tenant-admins to access admin panel
     meta: {
       titleSuffix: '- BiBu Belajar LMS',
     },
   },
   email: nodeMailerAdapter(),
-  collections: [Users, Media, Customers, Courses, Participation, Tenants, TenantAdmins],
+  collections: [Users, Media, Customers, Courses, Participation, Tenants],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
@@ -66,13 +64,10 @@ export default buildConfig({
           useBaseFilter: true,    // ✅ Terisolasi per tenant
           customTenantField: false, // ✅ Satu media = satu tenant
         },
-        tenantAdmins: {
-          useBaseFilter: true,    // ✅ Terisolasi per tenant
-          customTenantField: false, // ✅ Satu admin = satu tenant
-        },
       },
       userHasAccessToAllTenants: (user) => {
-        return user?.collection === 'users'
+        // Super admin has access to all tenants
+        return user?.collection === 'users' && user?.role === 'super-admin'
       },
       useTenantsCollectionAccess: false,
     }),

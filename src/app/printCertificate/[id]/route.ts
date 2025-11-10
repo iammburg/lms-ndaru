@@ -4,8 +4,9 @@ import { getUser } from '@/app/(frontend)/(authenticated)/_actions/getUser'
 import { Course, Participation } from '@/payload-types'
 import { NextRequest } from 'next/server'
 import ejs from 'ejs'
+import puppeteer from 'puppeteer'
 
-export const GET = async (req: NextRequest, { params }: { params: { id: string } }) => {
+export const GET = async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
   try {
     const payload = await getPayload({
       config: configPromise,
@@ -53,7 +54,6 @@ export const GET = async (req: NextRequest, { params }: { params: { id: string }
     })
 
     // Generate PDF using Puppeteer
-    const puppeteer = require('puppeteer')
     const browser = await puppeteer.launch({
       headless: true,
       args: [
@@ -88,7 +88,7 @@ export const GET = async (req: NextRequest, { params }: { params: { id: string }
 
     await browser.close()
 
-    return new Response(pdfBuffer, {
+    return new Response(Buffer.from(pdfBuffer), {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',

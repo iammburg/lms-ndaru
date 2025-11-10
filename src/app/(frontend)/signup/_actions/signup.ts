@@ -10,6 +10,7 @@ import { detectTenantFromDomain } from '@/lib/tenant'
 interface SignupParams {
   email: string
   password: string
+  tenant?: number | null
 }
 
 export interface SignupResponse {
@@ -17,29 +18,31 @@ export interface SignupResponse {
   error?: string
 }
 
-type Response = {
-  exp?: number
-  token?: string
-  user?: Customer
-}
+// type Response = {
+//   exp?: number
+//   token?: string
+//   user?: Customer
+// }
 
 export async function signup({ email, password }: SignupParams): Promise<SignupResponse> {
   const payload = await getPayload({ config })
 
   try {
-    // Detect tenant from current domain
     const tenantId = await detectTenantFromDomain()
 
-    // Prepare customer data
-    const customerData: any = {
+    const customerData: SignupParams = {
       email,
       password,
     }
 
-    // Add tenant if detected (for tenant domains)
     if (tenantId) {
-      customerData.tenant = tenantId
+      customerData.tenant = parseInt(tenantId)
+    } else {
+      customerData.tenant = null
     }
+
+    console.log('Creating customer with data:', customerData)
+    console.log('type of Tenant ID:', typeof customerData.tenant)
 
     await payload.create({
       collection: 'customers',
@@ -55,7 +58,7 @@ export async function signup({ email, password }: SignupParams): Promise<SignupR
     })
 
     if (result.token) {
-      let cookieStore = await cookies()
+      const cookieStore = await cookies()
       cookieStore.set({
         name: 'payload-token',
         value: result.token,

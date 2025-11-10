@@ -10,9 +10,9 @@ export default function FinishModule({ participation }: { participation: Partici
   async function handleDownload() {
     setLoading(true)
     try {
-      let course: Course = participation.course as Course
+      const course: Course = participation.course as Course
       const customer = participation.customer as Customer
-      let response = await fetch(`/printCertificate/${participation.id}`, {
+      const response = await fetch(`/printCertificate/${participation.id}`, {
         method: 'GET',
       })
 

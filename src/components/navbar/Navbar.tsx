@@ -5,9 +5,7 @@ import { NavigationSheet } from './NavigationSheet'
 import Link from 'next/link'
 
 import { headers as getHeaders } from 'next/headers.js'
-import Image from 'next/image'
 import { getPayload } from 'payload'
-import { fileURLToPath } from 'url'
 import config from '@/payload.config'
 
 export default async function Navbar() {
