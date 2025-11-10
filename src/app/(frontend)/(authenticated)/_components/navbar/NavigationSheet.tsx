@@ -6,7 +6,11 @@ import { Menu } from 'lucide-react'
 import { Logo } from './BrandLogo'
 import { NavMenu } from './NavMenu'
 
-export const NavigationSheet = () => {
+interface NavigationSheetProps {
+  isMainApp?: boolean
+}
+
+export const NavigationSheet = ({ isMainApp = false }: NavigationSheetProps) => {
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -16,7 +20,7 @@ export const NavigationSheet = () => {
       </SheetTrigger>
       <SheetContent className="px-6 py-3">
         <Logo />
-        <NavMenu orientation="vertical" className="mt-6 [&>div]:h-full" />
+        <NavMenu isMainApp={isMainApp} orientation="vertical" className="mt-6 [&>div]:h-full" />
       </SheetContent>
     </Sheet>
   )

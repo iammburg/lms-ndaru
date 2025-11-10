@@ -11,7 +11,11 @@ import Link from 'next/link'
 import { ComponentProps } from 'react'
 import { usePathname } from 'next/navigation'
 
-export const NavMenu = (props: ComponentProps<typeof NavigationMenu>) => {
+interface NavMenuProps extends ComponentProps<typeof NavigationMenu> {
+  isMainApp?: boolean
+}
+
+export const NavMenu = ({ isMainApp = false, ...props }: NavMenuProps) => {
   const pathname = usePathname()
 
   return (
@@ -28,7 +32,7 @@ export const NavMenu = (props: ComponentProps<typeof NavigationMenu>) => {
             <Link href="/dashboard">Dashboard</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
-        <NavigationMenuItem>
+        {isMainApp && <NavigationMenuItem>
           <NavigationMenuLink
             asChild
             className={cn(
@@ -36,17 +40,17 @@ export const NavMenu = (props: ComponentProps<typeof NavigationMenu>) => {
               pathname === '/dashboard/create-tenant' && 'bg-accent text-accent-foreground',
             )}
           >
-            <Link href="/dashboard/create-tenant">Create Tenant</Link>
+            <Link href="/dashboard/create-tenant">Buat Tenant</Link>
+          </NavigationMenuLink>
+        </NavigationMenuItem>}
+        <NavigationMenuItem>
+          <NavigationMenuLink asChild>
+            <Link href="#">Kelas & Materi</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
-            <Link href="#">Courses</Link>
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <NavigationMenuLink asChild>
-            <Link href="#">Certificate</Link>
+            <Link href="#">Sertifikat</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
         <NavigationMenuItem>

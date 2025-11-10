@@ -5,8 +5,8 @@ import { getUser } from '../(authenticated)/_actions/getUser'
 import { redirect } from 'next/navigation'
 
 export const metadata = {
-  description: 'Login page for BiBuBelajar LMS',
-  title: 'Login Page - BiBuBelajar LMS',
+  description: 'Halaman Masuk untuk BiBuBelajar LMS',
+  title: 'Masuk - BiBuBelajar LMS',
 }
 
 export default async function LoginLayout(props: { children: React.ReactNode }) {

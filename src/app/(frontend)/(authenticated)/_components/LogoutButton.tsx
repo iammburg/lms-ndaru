@@ -36,7 +36,7 @@ export default function LogoutButton() {
           'Logging out...'
         ) : (
           <>
-            Logout <LogOut size={24} />
+            Keluar <LogOut size={24} />
           </>
         )}
       </Button>

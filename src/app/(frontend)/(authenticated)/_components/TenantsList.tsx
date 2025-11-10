@@ -48,13 +48,13 @@ export default async function MyTenantsList() {
 
     if (tenants.length === 0) {
         return (
-            <Card className="w-full">
+            <Card className="w-full max-h-3/6 overflow-auto">
                 <CardHeader>
-                    <CardTitle>Your Tenants</CardTitle>
+                    <CardTitle>List Tenant</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <p className="text-sm text-muted-foreground">
-                        You haven&apos;t created any tenants yet. Create your first tenant to get started!
+                        Kamu belum membuat tenant apa pun. Buat tenant pertamamu untuk memulai!
                     </p>
                 </CardContent>
             </Card>
@@ -62,16 +62,16 @@ export default async function MyTenantsList() {
     }
 
     return (
-        <Card className="w-full">
+        <Card className="w-full max-h-3/6 overflow-auto">
             <CardHeader>
-                <CardTitle>Your Tenants ({tenants.length})</CardTitle>
+                <CardTitle>Tenant Kamu ({tenants.length})</CardTitle>
             </CardHeader>
             <CardContent>
                 <div className="space-y-4">
                     {tenants.map((tenant) => (
                         <div
                             key={tenant.id}
-                            className="p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                            className="p-4 border rounded-lg hover:bg-secondary"
                         >
                             <div className="flex items-start justify-between">
                                 <div className="flex-1">
@@ -96,7 +96,7 @@ export default async function MyTenantsList() {
                                     )}
 
                                     <p className="text-xs text-muted-foreground">
-                                        Created: {new Date(tenant.createdAt).toLocaleDateString()}
+                                        Dibuat: {new Date(tenant.createdAt).toLocaleDateString()}
                                     </p>
                                 </div>
                             </div>

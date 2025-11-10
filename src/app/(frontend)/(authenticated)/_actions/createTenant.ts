@@ -23,7 +23,6 @@ export async function createTenant(data: CreateTenantData) {
     }
 
     try {
-        // Check if slug is already taken
         const existingTenant = await payload.find({
             collection: 'tenants',
             where: {
@@ -36,7 +35,6 @@ export async function createTenant(data: CreateTenantData) {
             throw new Error('Subdomain is already taken. Please choose a different one.')
         }
 
-        // Create the tenant
         const tenant = await payload.create({
             collection: 'tenants',
             data: {
@@ -47,20 +45,19 @@ export async function createTenant(data: CreateTenantData) {
                 status: 'active',
                 createdBy: user.id,
                 settings: {
-                    maxUsers: 100, // Default for self-service
+                    maxUsers: 100,
                 }
             },
         })
 
-        console.log(`✅ Tenant "${tenant.name}" created successfully with ID: ${tenant.id}`)
+        console.log(`Tenant "${tenant.name}" created successfully with ID: ${tenant.id}`)
 
-        // Auto-create tenant admin user
         try {
             const adminUser = await payload.create({
                 collection: 'users',
                 data: {
                     email: data.adminEmail || user.email,
-                    password: data.adminPassword || `${data.slug}Admin123!`, // Default password
+                    password: data.adminPassword || `${data.slug}Admin123!`,
                     name: data.adminName || `${data.name} Admin`,
                     role: 'tenant-admin',
                     tenant: tenant.id,
@@ -69,7 +66,7 @@ export async function createTenant(data: CreateTenantData) {
                 overrideAccess: true, // Bypass access control for auto-creation
             })
 
-            console.log(`✅ Tenant admin created: ${adminUser.email} for tenant: ${tenant.name}`)
+            console.log(`Tenant admin created: ${adminUser.email} for tenant: ${tenant.name}`)
 
             return {
                 tenant,
@@ -81,7 +78,7 @@ export async function createTenant(data: CreateTenantData) {
                 adminPanelUrl: `https://${tenant.slug}.bibubelajar.com/admin`,
             }
         } catch (adminError) {
-            console.error('⚠️ Error creating tenant admin:', adminError)
+            console.error('Error creating tenant admin:', adminError)
 
             // Tenant created but admin failed - still return success
             return {
@@ -93,7 +90,7 @@ export async function createTenant(data: CreateTenantData) {
             }
         }
     } catch (error) {
-        console.error('❌ Error creating tenant:', error)
+        console.error('Error creating tenant:', error)
         throw new Error(error instanceof Error ? error.message : 'Failed to create tenant')
     }
 }

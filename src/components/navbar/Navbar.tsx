@@ -32,10 +32,10 @@ export default async function Navbar() {
             {!user ? (
               <div className="flex items-center gap-3">
                 <Button variant="outline" className="hidden sm:inline-flex">
-                  <Link href="/login">Log In</Link>
+                  <Link href="/login">Masuk</Link>
                 </Button>
                 <Button>
-                  <Link href="/signup">Sign Up</Link>
+                  <Link href="/signup">Daftar</Link>
                 </Button>
               </div>
             ) : (

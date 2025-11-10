@@ -69,7 +69,7 @@ export default function SignupForm({ tenantId, tenantName }: SignupFormProps): R
           </CardDescription>
           <CardAction>
             <Button variant="link">
-              <Link href="/login">Login</Link>
+              <Link href="/login" className='underline'>Masuk</Link>
             </Button>
           </CardAction>
         </CardHeader>
@@ -78,7 +78,7 @@ export default function SignupForm({ tenantId, tenantName }: SignupFormProps): R
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" name="email" placeholder="m@example.com" required />
+                <Input id="email" type="email" name="email" placeholder="email@contoh.com" required />
               </div>
               <div className="grid gap-2">
                 <div className="flex items-center">
@@ -94,7 +94,7 @@ export default function SignupForm({ tenantId, tenantName }: SignupFormProps): R
               </div>
               <div className="flex flex-col gap-2 mt-4">
                 {error && <p className="text-xs text-red-500">{error}</p>}
-                <SubmitButton loading={isPending} text="Signup" />
+                <SubmitButton loading={isPending} text="Daftar" />
               </div>
             </div>
           </form>

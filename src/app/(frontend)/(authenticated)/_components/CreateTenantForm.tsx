@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -15,8 +14,6 @@ export default function CreateTenantForm() {
     const [error, setError] = useState<string | null>(null)
     const [tenantUrl, setTenantUrl] = useState<string | null>(null)
     const [adminPanelUrl, setAdminPanelUrl] = useState<string | null>(null)
-    const [adminCredentials, setAdminCredentials] = useState<{ email: string, password: string } | null>(null)
-    // const router = useRouter()
 
     const handleSubmit = async (formData: FormData) => {
         setIsSubmitting(true)
@@ -33,12 +30,10 @@ export default function CreateTenantForm() {
                 adminName: formData.get('adminName') as string,
             }
 
-            // Basic validation
             if (!data.name || !data.slug) {
                 throw new Error('Name and subdomain are required')
             }
 
-            // Validate slug format
             const slugPattern = /^[a-z0-9-]+$/
             if (!slugPattern.test(data.slug)) {
                 throw new Error('Subdomain can only contain lowercase letters, numbers, and hyphens')
@@ -47,13 +42,6 @@ export default function CreateTenantForm() {
             const result = await createTenant(data)
             setTenantUrl(result.subdomainUrl)
             setAdminPanelUrl(result.adminPanelUrl || null)
-
-            if (result.adminUser) {
-                setAdminCredentials({
-                    email: result.adminUser.email,
-                    password: result.adminUser.defaultPassword
-                })
-            }
 
             setIsSuccess(true)
         } catch (err) {
@@ -65,16 +53,16 @@ export default function CreateTenantForm() {
 
     if (isSuccess) {
         return (
-            <Card className="w-full max-w-md mx-auto">
+            <Card className="w-full mx-auto">
                 <CardHeader>
-                    <CardTitle className="text-green-600">🎉 Tenant Created Successfully!</CardTitle>
+                    <CardTitle className="text-green-600">Tenant berhasil dibuat!</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <p className="text-sm text-muted-foreground">
-                        Your tenant has been created and is ready to use.
+                        Tenant kamu telah berhasil dibuat. Berikut detailnya:
                     </p>
                     {tenantUrl && (
-                        <div className="p-4 bg-blue-50 rounded-lg space-y-2">
+                        <div>
                             <p className="text-sm font-medium">Tenant URL:</p>
                             <a
                                 href={tenantUrl}
@@ -87,28 +75,16 @@ export default function CreateTenantForm() {
                         </div>
                     )}
                     {adminPanelUrl && (
-                        <div className="p-4 bg-purple-50 rounded-lg space-y-2">
+                        <div>
                             <p className="text-sm font-medium">Admin Panel URL:</p>
                             <a
                                 href={adminPanelUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-purple-600 hover:text-purple-800 underline text-sm break-all"
+                                className="text-blue-600 hover:text-blue-800 underline text-sm break-all"
                             >
                                 {adminPanelUrl}
                             </a>
-                        </div>
-                    )}
-                    {adminCredentials && (
-                        <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg space-y-2">
-                            <p className="text-sm font-bold text-yellow-800">⚠️ Admin Credentials (Save this!)</p>
-                            <div className="space-y-1 text-sm">
-                                <p><span className="font-medium">Email:</span> {adminCredentials.email}</p>
-                                <p><span className="font-medium">Password:</span> {adminCredentials.password}</p>
-                            </div>
-                            <p className="text-xs text-yellow-700 mt-2">
-                                Please save these credentials securely. You can change the password after first login.
-                            </p>
                         </div>
                     )}
                     <div className="flex gap-2">
@@ -117,19 +93,18 @@ export default function CreateTenantForm() {
                                 setIsSuccess(false)
                                 setTenantUrl(null)
                                 setAdminPanelUrl(null)
-                                setAdminCredentials(null)
                             }}
                             variant="outline"
                             className="flex-1"
                         >
-                            Create Another
+                            Buat yang lain
                         </Button>
                         {adminPanelUrl && (
                             <Button
                                 onClick={() => window.open(adminPanelUrl, '_blank')}
                                 className="flex-1"
                             >
-                                Go to Admin Panel
+                                Pergi ke Admin Panel
                             </Button>
                         )}
                     </div>
@@ -139,22 +114,22 @@ export default function CreateTenantForm() {
     }
 
     return (
-        <Card className="w-full max-w-md mx-auto">
+        <Card className="w-full mx-auto">
             <CardHeader>
-                <CardTitle>Create New Tenant</CardTitle>
+                <CardTitle>Buat Tenant Baru</CardTitle>
                 <p className="text-sm text-muted-foreground">
-                    Create your own LMS environment with a custom subdomain.
+                    Buat lingkungan LMS kamu sendiri dengan custom subdomain
                 </p>
             </CardHeader>
             <CardContent>
                 <form action={handleSubmit} className="space-y-4">
                     <div className="space-y-2">
-                        <Label htmlFor="name">Tenant Name *</Label>
+                        <Label htmlFor="name">Nama Tenant *</Label>
                         <Input
                             id="name"
                             name="name"
                             type="text"
-                            placeholder="My Company LMS"
+                            placeholder="Ndaru LMS"
                             required
                             disabled={isSubmitting}
                         />
@@ -167,87 +142,87 @@ export default function CreateTenantForm() {
                                 id="slug"
                                 name="slug"
                                 type="text"
-                                placeholder="mycompany"
+                                placeholder="my-lms"
                                 required
                                 disabled={isSubmitting}
                                 className="flex-1"
                                 pattern="^[a-z0-9-]+$"
-                                title="Only lowercase letters, numbers, and hyphens allowed"
+                                title="Hanya huruf kecil, angka, dan tanda hubung yang diperbolehkan."
                             />
                             <span className="text-sm text-muted-foreground">.bibubelajar.com</span>
                         </div>
                         <p className="text-xs text-muted-foreground">
-                            This will be your subdomain URL (e.g., mycompany.bibubelajar.com)
+                            Ini akan menjadi URL subdomain kamu (misalnya: ndaru-salto.bibubelajar.com)
                         </p>
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="description">Description</Label>
+                        <Label htmlFor="description">Deskripsi</Label>
                         <Textarea
                             id="description"
                             name="description"
-                            placeholder="Brief description of your organization..."
+                            placeholder="Deskripsi singkat tentang LMS kamu"
                             disabled={isSubmitting}
                             rows={3}
                         />
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="contactEmail">Contact Email</Label>
+                        <Label htmlFor="contactEmail">Email Kontak</Label>
                         <Input
                             id="contactEmail"
                             name="contactEmail"
                             type="email"
-                            placeholder="admin@mycompany.com"
+                            placeholder="admin@mylms.com"
                             disabled={isSubmitting}
                         />
                         <p className="text-xs text-muted-foreground">
-                            Leave blank to use your current email
+                            Kosongkan untuk menggunakan email-mu
                         </p>
                     </div>
 
                     <div className="border-t pt-4 space-y-4">
-                        <h3 className="font-medium text-sm">Admin Account Settings</h3>
+                        <h3 className="font-medium text-sm">Pengaturan Akun Admin</h3>
 
                         <div className="space-y-2">
-                            <Label htmlFor="adminName">Admin Name</Label>
+                            <Label htmlFor="adminName">Nama Admin</Label>
                             <Input
                                 id="adminName"
                                 name="adminName"
                                 type="text"
-                                placeholder="Admin Name"
+                                placeholder="Nama Admin"
                                 disabled={isSubmitting}
                             />
                             <p className="text-xs text-muted-foreground">
-                                Leave blank to auto-generate
+                                Kosongkan untuk generate secara otomatis
                             </p>
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="adminEmail">Admin Email</Label>
+                            <Label htmlFor="adminEmail">Email Admin</Label>
                             <Input
                                 id="adminEmail"
                                 name="adminEmail"
                                 type="email"
-                                placeholder="admin@mycompany.com"
+                                placeholder="admin@lms.com"
                                 disabled={isSubmitting}
                             />
                             <p className="text-xs text-muted-foreground">
-                                Leave blank to use contact email
+                                Kosongkan untuk menggunakan email contact kamu.
                             </p>
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="adminPassword">Admin Password</Label>
+                            <Label htmlFor="adminPassword">Password Admin</Label>
                             <Input
                                 id="adminPassword"
                                 name="adminPassword"
                                 type="password"
-                                placeholder="Secure password"
+                                placeholder="Masukkan password yang aman"
                                 disabled={isSubmitting}
                             />
                             <p className="text-xs text-muted-foreground">
-                                Leave blank to auto-generate secure password
+                                Kosongkan untuk generate secara otomatis
                             </p>
                         </div>
                     </div>
@@ -259,7 +234,7 @@ export default function CreateTenantForm() {
                     )}
 
                     <Button type="submit" disabled={isSubmitting} className="w-full">
-                        {isSubmitting ? 'Creating Tenant...' : 'Create Tenant'}
+                        {isSubmitting ? 'Membuat Tenant...' : 'Buat Tenant'}
                     </Button>
                 </form>
             </CardContent>
