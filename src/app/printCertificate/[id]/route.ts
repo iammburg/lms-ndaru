@@ -36,7 +36,7 @@ export const GET = async (req: NextRequest, { params }: { params: Promise<{ id: 
     if (lastModule.blockType !== 'finish') {
       return new Response('Course has no certificate', { status: 400 })
     }
-    if (participation.isCompleted) {
+    if (!participation.isCompleted) {
       return new Response('Course is not finished', { status: 400 })
     }
     if (!('template' in lastModule)) {
