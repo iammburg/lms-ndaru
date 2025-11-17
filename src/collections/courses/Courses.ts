@@ -2,14 +2,15 @@ import type { CollectionConfig, Access, Where } from 'payload'
 import { VideoBlock } from './blocks/VideoBlock'
 import { QuizBlock } from './blocks/QuizBlock'
 import { FinishBlock } from './blocks/FinishBlock'
+import { Customer, User } from '@/payload-types'
 
 const readAccess: Access = ({ req }) => {
-  if (req.user?.collection === 'users' && (req.user as any).role === 'super-admin') {
+  if (req.user?.collection === 'users' && (req.user as User).role === 'super-admin') {
     return true
   }
 
-  if (req.user?.collection === 'users' && (req.user as any).role === 'tenant-admin') {
-    const userTenant = (req.user as any).tenant
+  if (req.user?.collection === 'users' && (req.user as User).role === 'tenant-admin') {
+    const userTenant = (req.user as User).tenant
     const tenantId = typeof userTenant === 'object' ? userTenant?.id : userTenant
 
     if (!tenantId) {
@@ -23,7 +24,7 @@ const readAccess: Access = ({ req }) => {
   }
 
   if (req.user?.collection === 'customers') {
-    const userTenant = (req.user as any).tenant
+    const userTenant = (req.user as Customer).tenant
     const tenantId = typeof userTenant === 'object' ? userTenant?.id : userTenant
 
     if (!tenantId) {
@@ -72,7 +73,7 @@ export const Courses: CollectionConfig = {
     read: readAccess,
     update: updateAccess,
     delete: ({ req }) => {
-      return req.user?.collection === 'users' && (req.user as any).role === 'super-admin'
+      return req.user?.collection === 'users' && (req.user as User).role === 'super-admin'
     },
   },
   admin: {
@@ -123,7 +124,7 @@ export const Courses: CollectionConfig = {
     beforeChange: [
       async ({ data, req, operation }) => {
         if (operation === 'create' && !data.tenant && req.user) {
-          const user = req.user as any
+          const user = req.user as User
           const tenantId = typeof user.tenant === 'object' ? user.tenant?.id : user.tenant
           if (tenantId) {
             data.tenant = tenantId

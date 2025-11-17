@@ -1,3 +1,4 @@
+import { User } from '@/payload-types'
 import { CollectionConfig } from 'payload'
 import type { Access, Where } from 'payload'
 
@@ -144,7 +145,7 @@ export const Participation: CollectionConfig = {
     beforeChange: [
       async ({ data, req, operation }) => {
         if (operation === 'create' && !data.tenant && req.user) {
-          const user = req.user as any
+          const user = req.user as User
           const tenantId = typeof user.tenant === 'object' ? user.tenant?.id : user.tenant
           if (tenantId) {
             data.tenant = tenantId

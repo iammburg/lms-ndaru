@@ -1,12 +1,13 @@
+import { User } from '@/payload-types'
 import type { CollectionConfig, Access, Where } from 'payload'
 
 const readAccess: Access = ({ req }) => {
-  if (req.user?.collection === 'users' && (req.user as any).role === 'super-admin') {
+  if (req.user?.collection === 'users' && (req.user as User).role === 'super-admin') {
     return true
   }
 
-  if (req.user?.collection === 'users' && (req.user as any).role === 'tenant-admin') {
-    const userTenant = (req.user as any).tenant
+  if (req.user?.collection === 'users' && (req.user as User).role === 'tenant-admin') {
+    const userTenant = (req.user as User).tenant
     const tenantId = typeof userTenant === 'object' ? userTenant?.id : userTenant
 
     if (!tenantId) {
@@ -67,7 +68,7 @@ export const Customers: CollectionConfig = {
     read: readAccess,
     update: updateAccess,
     delete: ({ req }) => {
-      return req.user?.collection === 'users' && (req.user as any).role === 'super-admin'
+      return req.user?.collection === 'users' && (req.user as User).role === 'super-admin'
     },
   },
   auth: true,
@@ -88,7 +89,7 @@ export const Customers: CollectionConfig = {
   ],
   hooks: {
     beforeChange: [
-      async ({ data, req, operation }) => {
+      async ({ data, operation }) => {
         if (operation === 'create' && !data.tenant) {
           try {
             const { detectTenantFromDomain } = await import('../lib/tenant')
@@ -104,7 +105,7 @@ export const Customers: CollectionConfig = {
       }
     ],
     afterRead: [
-      async ({ doc, req }) => {
+      async ({ doc }) => {
         return doc
       }
     ]

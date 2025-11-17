@@ -24,7 +24,7 @@ const CoursePage = async ({ params }: { params: Promise<{ courseId: string }> })
   let course: Course | null = null
 
   try {
-    const userTenant = (user as any)?.tenant
+    const userTenant = user?.tenant
     const tenantId = typeof userTenant === 'object' ? userTenant?.id : userTenant
 
     const res = await payload.findByID({

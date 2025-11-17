@@ -94,7 +94,7 @@ const page = async () => {
                 <Link
                   href={`/dashboard/course/${course.id}`}
                   key={course.id}
-                  className="flex flex-col cursor-pointer relative border rounded-md border-gray-700 hover:border-white transition ease-in-out duration-100 overflow-hidden"
+                  className="flex flex-col cursor-pointer relative border rounded-md border-foreground hover:border-primary transition ease-in-out duration-100 overflow-hidden"
                 >
                   <div className="relative w-full aspect-video border rounded-md overflow-hidden">
                     {course.image && typeof course.image === 'object' && course.image.url ? (

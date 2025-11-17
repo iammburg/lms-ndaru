@@ -1,5 +1,5 @@
-import { Participation } from '@/payload-types'
-import { useEffect, useState } from 'react'
+import { Participation, Course } from '@/payload-types'
+import { useEffect, useState, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
@@ -9,8 +9,10 @@ import NextButton from './NextButton'
 import { markProgress } from '../_actions/markProgress'
 import { CheckCircle, XCircle, HelpCircle } from 'lucide-react'
 
+type QuizModule = Extract<NonNullable<Course['curriculum']>[number], { blockType: 'quiz' }>
+
 interface QuizModuleProps {
-  module: any
+  module: QuizModule
   participation: Participation
   onCompleted: (nextIndex: number) => void
   totalModules: number
@@ -29,17 +31,17 @@ export default function QuizModule({
   const [loading, setLoading] = useState(false)
   const [allAnswerCorrect, setAllAnswerCorrect] = useState(false)
 
-  function setEmptyUserAnswer() {
-    const tempAnswers = module.questions.map((question: any) => {
+  const setEmptyUserAnswer = useCallback(() => {
+    const tempAnswers = module.questions.map((question) => {
       return question.answers.map(() => false)
     })
 
     setUserAnswers(tempAnswers)
-  }
+  }, [module.questions])
 
   useEffect(() => {
     setEmptyUserAnswer()
-  }, [])
+  }, [setEmptyUserAnswer])
 
   async function handleNextModule() {
     setLoading(true)
@@ -98,7 +100,7 @@ export default function QuizModule({
       <h2 className="text-2xl font-bold">{module.title}</h2>
 
       <div className="space-y-6">
-        {module.questions.map((question: any, index: number) => (
+        {module.questions.map((question, index: number) => (
           <Card key={index} className="border-2 border-secondary py-3">
             <CardHeader>
               <CardTitle className="text-base font-medium">
@@ -108,7 +110,7 @@ export default function QuizModule({
 
             <CardContent>
               <div className="space-y-2">
-                {question.answers.map((answer: any, answerIndex: number) => (
+                {question.answers.map((answer, answerIndex: number) => (
                   <div
                     key={`${index}-${answerIndex}`}
                     className="flex items-center space-x-3 rounded-lg hover:bg-muted/50 transition-colors"
@@ -127,6 +129,7 @@ export default function QuizModule({
                         tempAnswers[index][answerIndex] = checked === true
                         setUserAnswers(tempAnswers)
                       }}
+                      className='border-foreground dark:background'
                     />
                     <Label
                       htmlFor={`answer-${index}-${answerIndex}`}
