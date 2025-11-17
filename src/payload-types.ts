@@ -271,6 +271,9 @@ export interface Customer {
  */
 export interface Media {
   id: number;
+  /**
+   * Tenant this media belongs to (optional for super-admin)
+   */
   tenant?: (number | null) | Tenant;
   alt: string;
   prefix?: string | null;

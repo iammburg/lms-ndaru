@@ -3,7 +3,7 @@ import { getPayload } from 'payload'
 import React, { Suspense } from 'react'
 import configPromise from '@payload-config'
 import Image from 'next/image'
-import { Course, Participation } from '@/payload-types'
+import { Course, Customer, Participation } from '@/payload-types'
 import Link from 'next/link'
 import { getUser } from '../_actions/getUser'
 import ResumeCourseButton from './course/[courseId]/_components/ResumeCourseButton'
@@ -23,14 +23,25 @@ const page = async () => {
   let courses: Course[] = []
 
   try {
+    // Get tenant ID from user
+    const userTenant = (user as Customer)?.tenant
+    const tenantId = typeof userTenant === 'object' ? userTenant?.id : userTenant
+
+    console.log('Fetching courses for tenant:', tenantId)
+
     const coursesRes = await payload.find({
       collection: 'courses',
+      where: tenantId ? {
+        tenant: { equals: tenantId }
+      } : {
+        tenant: { equals: null }
+      },
       limit: 10,
-      overrideAccess: false,
-      user: user,
+      overrideAccess: true,
     })
     courses = coursesRes.docs
     console.log('Courses found:', courses.length)
+    console.log('Courses:', coursesRes)
   } catch (e) {
     console.log('Error fetching courses:', e)
   }
@@ -45,8 +56,7 @@ const page = async () => {
           equals: user?.id,
         },
       },
-      overrideAccess: false,
-      user: user,
+      overrideAccess: true,
     })
 
     participations = participationsRes?.docs || []
@@ -89,7 +99,12 @@ const page = async () => {
                 >
                   <div className="relative w-full aspect-video border rounded-md overflow-hidden">
                     {course.image && typeof course.image === 'object' && course.image.url ? (
-                      <Image alt={`${course.title} thumbnail`} src={course.image.url} fill={true} />
+                      <Image
+                        alt={`${course.title} thumbnail`}
+                        src={course.image.url}
+                        fill={true}
+                        className="object-cover"
+                      />
                     ) : (
                       <div className="w-full h-full bg-gray-800 flex items-center justify-center text-gray-400">
                         No Image
@@ -103,7 +118,7 @@ const page = async () => {
               )
             })
           ) : (
-            <div className="text-sm">Belum ada Course yang tersedia.</div>
+            <div className="text-sm">Belum ada course yang tersedia.</div>
           )}
         </Suspense>
       </div>

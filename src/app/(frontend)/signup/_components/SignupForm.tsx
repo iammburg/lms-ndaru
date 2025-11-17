@@ -22,7 +22,7 @@ interface SignupFormProps {
   tenantName?: string
 }
 
-export default function SignupForm({ tenantId, tenantName }: SignupFormProps): ReactElement {
+export default function SignupForm({ tenantName }: SignupFormProps): ReactElement {
   const [isPending, setIsPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()

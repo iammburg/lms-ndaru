@@ -151,9 +151,6 @@ export default function CreateTenantForm() {
                             />
                             <span className="text-sm text-muted-foreground">.bibubelajar.com</span>
                         </div>
-                        <p className="text-xs text-muted-foreground">
-                            Ini akan menjadi URL subdomain kamu (misalnya: ndaru-salto.bibubelajar.com)
-                        </p>
                     </div>
 
                     <div className="space-y-2">
@@ -194,7 +191,7 @@ export default function CreateTenantForm() {
                                 disabled={isSubmitting}
                             />
                             <p className="text-xs text-muted-foreground">
-                                Kosongkan untuk generate secara otomatis
+                                Kosongkan untuk generate secara otomatis (&quot;Nama Tenant&quot; Admin)
                             </p>
                         </div>
 
@@ -208,7 +205,7 @@ export default function CreateTenantForm() {
                                 disabled={isSubmitting}
                             />
                             <p className="text-xs text-muted-foreground">
-                                Kosongkan untuk menggunakan email contact kamu.
+                                Kosongkan untuk menggunakan email-mu.
                             </p>
                         </div>
 

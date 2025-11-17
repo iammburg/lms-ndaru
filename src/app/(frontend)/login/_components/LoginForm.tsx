@@ -22,7 +22,7 @@ interface LoginFormProps {
   tenantName?: string
 }
 
-export default function LoginForm({ tenantId, tenantName }: LoginFormProps): ReactElement {
+export default function LoginForm({ tenantName }: LoginFormProps): ReactElement {
   const [isPending, setIsPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()

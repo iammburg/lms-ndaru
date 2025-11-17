@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { headers as getHeaders } from 'next/headers.js'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
+import { ModeToggle } from '../mode-toggle'
 
 export default async function Navbar() {
   const headers = await getHeaders()
@@ -43,6 +44,7 @@ export default async function Navbar() {
                 <Link href="/dashboard">Dashboard</Link>
               </Button>
             )}
+            <ModeToggle />
 
             {/* Mobile Menu */}
             <div className="md:hidden">

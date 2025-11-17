@@ -24,12 +24,22 @@ const CoursePage = async ({ params }: { params: Promise<{ courseId: string }> })
   let course: Course | null = null
 
   try {
+    // Get tenant ID from user
+    const userTenant = (user as any)?.tenant
+    const tenantId = typeof userTenant === 'object' ? userTenant?.id : userTenant
+
     const res = await payload.findByID({
       collection: 'courses',
       id: courseId,
-      overrideAccess: false,
-      user: user,
+      overrideAccess: true,
     })
+
+    // Verify course belongs to user's tenant
+    const courseTenant = typeof res.tenant === 'object' ? res.tenant?.id : res.tenant
+    if (tenantId && courseTenant !== tenantId) {
+      console.log('Access denied: Course tenant mismatch')
+      return notFound()
+    }
 
     course = res
   } catch (error) {
@@ -53,8 +63,7 @@ const CoursePage = async ({ params }: { params: Promise<{ courseId: string }> })
           equals: user?.id,
         },
       },
-      overrideAccess: false,
-      user: user,
+      overrideAccess: true,
     })
 
     participation = participationRes?.docs?.[0] || null
@@ -70,11 +79,14 @@ const CoursePage = async ({ params }: { params: Promise<{ courseId: string }> })
         </Button>
       </Link>
 
-      <Image
-        className="object-cover object-center aspect-video overflow-hidden w-full rounded-md border border-gray-700"
-        src={(course.image as Media | null)?.url ?? 'https://placehold.co/600x400.png'}
-        alt={`${course.title} thumbnail`}
-      />
+      <div className="relative w-full aspect-video overflow-hidden rounded-md border border-gray-700">
+        <Image
+          className="object-cover object-center"
+          src={(course.image as Media | null)?.url ?? 'https://placehold.co/600x400.png'}
+          alt={`${course.title} thumbnail`}
+          fill={true}
+        />
+      </div>
 
       <div>
         <h1 className="mt-4 text-2xl lg:text-3xl font-semibold leading-tight text-gray-800 dark:text-white">

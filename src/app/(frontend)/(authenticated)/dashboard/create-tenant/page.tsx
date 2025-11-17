@@ -16,7 +16,7 @@ export default async function CreateTenantPage() {
             <div className="flex flex-col">
                 <h1 className="text-lg lg:text-xl font-bold">Buat lingkungan LMS kamu sendiri</h1>
                 <p className="text-sm lg:text-base text-muted-foreground mt-1">
-                    Buat dan kelola lingkungan LMS kamu sendiri dengan subdomain kustom. Ideal untuk organisasi, sekolah, atau perusahaan yang ingin memiliki platform pembelajaran bermerk sendiri.
+                    Buat dan kelola lingkungan LMS kamu sendiri dengan subdomain kustom. Cocok untuk organisasi, sekolah, atau perusahaan yang ingin memiliki platform pembelajaran sendiri.
                 </p>
                 <div className="mt-4 p-4 bg-secondary border rounded-lg">
                     <h3 className="text-base lg:text-lg font-semibold mb-2">Apa yang terjadi setelah membuat Tenant?</h3>
@@ -25,7 +25,7 @@ export default async function CreateTenantPage() {
                         <li>- Akun admin Tenant akan dibuat secara otomatis buat kamu.</li>
                         <li>- Kamu bisa mengelola materi, pengguna, dan konten secara mandiri.</li>
                         <li>- Data kamu sepenuhnya terisolasi dari tenant atau penyewa lain.</li>
-                        <li>- Kamu bisa menyesuaikan branding dan pengaturan untuk Tenant kamu. (comming soon)</li>
+                        <li>- Kamu bisa menyesuaikan branding dan pengaturan untuk Tenant kamu (coming soon)</li>
                     </ul>
                 </div>
             </div>

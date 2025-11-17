@@ -22,9 +22,14 @@ export default async function ParticipationPage({
     const res: Participation = await payload.findByID({
       collection: 'participation',
       id: participationId,
-      overrideAccess: false,
-      user: user,
+      overrideAccess: true,
     })
+
+    const participationCustomerId = typeof res.customer === 'object' ? res.customer?.id : res.customer
+    if (participationCustomerId !== user?.id) {
+      console.log('Access denied: Participation does not belong to user')
+      return notFound()
+    }
 
     participation = res
   } catch (error) {

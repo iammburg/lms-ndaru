@@ -1,12 +1,10 @@
 import type { CollectionConfig, Access, Where } from 'payload'
 
 const readAccess: Access = ({ req }) => {
-  // Super admin can read all tenants
   if (req.user?.collection === 'users' && req.user?.role === 'super-admin') {
     return true
   }
 
-  // Tenant admin can only read their own tenant
   if (req.user?.collection === 'users' && req.user?.role === 'tenant-admin') {
     const tenantId = typeof req.user.tenant === 'object' ? req.user.tenant?.id : req.user.tenant
 
@@ -19,7 +17,6 @@ const readAccess: Access = ({ req }) => {
     } as Where
   }
 
-  // Customers can only read tenants they created
   if (req.user?.collection === 'customers' && req.user?.id) {
     return {
       createdBy: { equals: req.user.id },
@@ -30,12 +27,10 @@ const readAccess: Access = ({ req }) => {
 }
 
 const updateAccess: Access = ({ req }) => {
-  // Super admin can update all tenants
   if (req.user?.collection === 'users' && req.user?.role === 'super-admin') {
     return true
   }
 
-  // Tenant admin can update their own tenant (limited fields)
   if (req.user?.collection === 'users' && req.user?.role === 'tenant-admin') {
     const tenantId = typeof req.user.tenant === 'object' ? req.user.tenant?.id : req.user.tenant
 
@@ -48,7 +43,6 @@ const updateAccess: Access = ({ req }) => {
     } as Where
   }
 
-  // Customers can update tenants they created
   if (req.user?.collection === 'customers' && req.user?.id) {
     return {
       createdBy: { equals: req.user.id },
@@ -66,7 +60,6 @@ export const Tenants: CollectionConfig = {
     group: 'Tenant Management',
   },
   access: {
-    // Super admin can create tenants, customers can create their own
     create: ({ req }) => {
       return (req.user?.collection === 'users' && req.user?.role === 'super-admin') ||
         req.user?.collection === 'customers'
@@ -74,7 +67,6 @@ export const Tenants: CollectionConfig = {
     read: readAccess,
     update: updateAccess,
     delete: ({ req }) => {
-      // Only super admin can delete tenants
       return req.user?.collection === 'users' && req.user?.role === 'super-admin'
     },
   },
@@ -90,7 +82,6 @@ export const Tenants: CollectionConfig = {
         position: 'sidebar',
       },
       access: {
-        // Auto-filled, not manually editable
         update: ({ req }) => req.user?.collection === 'users',
       }
     },
@@ -114,13 +105,11 @@ export const Tenants: CollectionConfig = {
 
         const stringValue = String(value)
 
-        // Only allow lowercase letters, numbers, and hyphens
         const slugPattern = /^[a-z0-9-]+$/
         if (!slugPattern.test(stringValue)) {
           return 'Slug can only contain lowercase letters, numbers, and hyphens'
         }
 
-        // Prevent reserved subdomains
         const reservedSlugs = ['www', 'api', 'admin', 'app', 'mail', 'ftp', 'blog', 'shop', 'store']
         if (reservedSlugs.includes(stringValue)) {
           return `"${stringValue}" is a reserved subdomain and cannot be used`

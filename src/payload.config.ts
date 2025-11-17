@@ -47,18 +47,6 @@ export default buildConfig({
     multiTenantPlugin({
       tenantsSlug: 'tenants',
       collections: {
-        courses: {
-          useBaseFilter: false,
-          customTenantField: true,
-        },
-        participation: {
-          useBaseFilter: false,
-          customTenantField: true,
-        },
-        media: {
-          useBaseFilter: true,
-          customTenantField: false,
-        },
       },
       userHasAccessToAllTenants: (user) => {
         const hasAccess = user?.collection === 'users' && user?.role === 'super-admin'

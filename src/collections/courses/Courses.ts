@@ -1,80 +1,78 @@
-import { CollectionConfig } from 'payload'
+import type { CollectionConfig, Access, Where } from 'payload'
 import { VideoBlock } from './blocks/VideoBlock'
 import { QuizBlock } from './blocks/QuizBlock'
 import { FinishBlock } from './blocks/FinishBlock'
 
+const readAccess: Access = ({ req }) => {
+  if (req.user?.collection === 'users' && (req.user as any).role === 'super-admin') {
+    return true
+  }
+
+  if (req.user?.collection === 'users' && (req.user as any).role === 'tenant-admin') {
+    const userTenant = (req.user as any).tenant
+    const tenantId = typeof userTenant === 'object' ? userTenant?.id : userTenant
+
+    if (!tenantId) {
+      return false
+    }
+
+    const whereClause = {
+      tenant: { equals: tenantId },
+    }
+    return whereClause
+  }
+
+  if (req.user?.collection === 'customers') {
+    const userTenant = (req.user as any).tenant
+    const tenantId = typeof userTenant === 'object' ? userTenant?.id : userTenant
+
+    if (!tenantId) {
+      return false
+    }
+
+    const whereClause = {
+      tenant: { equals: tenantId },
+    }
+    return whereClause
+  }
+
+  return false
+}
+
+const updateAccess: Access = ({ req }) => {
+  if (req.user?.collection === 'users' && req.user?.role === 'super-admin') {
+    return true
+  }
+
+  if (req.user?.collection === 'users' && req.user?.role === 'tenant-admin') {
+    const tenantId = typeof req.user.tenant === 'object' ? req.user.tenant?.id : req.user.tenant
+
+    if (!tenantId) {
+      return false
+    }
+
+    return {
+      tenant: { equals: tenantId },
+    } as Where
+  }
+
+  if (req.user?.collection === 'customers' && req.user?.id) {
+    return {
+      id: { equals: req.user.id },
+    } as Where
+  }
+
+  return false
+}
+
 export const Courses: CollectionConfig = {
   slug: 'courses',
   access: {
-    read: ({ req: { user } }) => {
-      // Super admin can read all courses
-      if (user?.collection === 'users' && user?.role === 'super-admin') {
-        return true
-      }
-
-      // Tenant admin can read courses in their tenant
-      if (user?.collection === 'users' && user?.role === 'tenant-admin') {
-        const tenantId = typeof user.tenant === 'object' ? user.tenant?.id : user.tenant
-        if (tenantId) {
-          return {
-            tenant: { equals: tenantId },
-          }
-        }
-      }
-
-      // Customer can read courses in their tenant (if they have one)
-      if (user?.collection === 'customers' && user.tenant) {
-        const tenantId = typeof user.tenant === 'object' ? user.tenant?.id : user.tenant
-        if (tenantId) {
-          return {
-            tenant: { equals: tenantId },
-          }
-        }
-      }
-
-      // Customers without tenant (main app users) cannot read courses
-      return false
-    },
-    create: ({ req: { user } }) => {
-      // Only super admin and tenant admin can create courses
-      return user?.collection === 'users' &&
-        (user?.role === 'super-admin' || user?.role === 'tenant-admin')
-    },
-    update: ({ req: { user } }) => {
-      // Super admin can update all courses
-      if (user?.collection === 'users' && user?.role === 'super-admin') {
-        return true
-      }
-
-      // Tenant admin can update courses in their tenant
-      if (user?.collection === 'users' && user?.role === 'tenant-admin') {
-        const tenantId = typeof user.tenant === 'object' ? user.tenant?.id : user.tenant
-        if (tenantId) {
-          return {
-            tenant: { equals: tenantId },
-          }
-        }
-      }
-
-      return false
-    },
-    delete: ({ req: { user } }) => {
-      // Super admin can delete all courses
-      if (user?.collection === 'users' && user?.role === 'super-admin') {
-        return true
-      }
-
-      // Tenant admin can delete courses in their tenant
-      if (user?.collection === 'users' && user?.role === 'tenant-admin') {
-        const tenantId = typeof user.tenant === 'object' ? user.tenant?.id : user.tenant
-        if (tenantId) {
-          return {
-            tenant: { equals: tenantId },
-          }
-        }
-      }
-
-      return false
+    create: () => true,
+    read: readAccess,
+    update: updateAccess,
+    delete: ({ req }) => {
+      return req.user?.collection === 'users' && (req.user as any).role === 'super-admin'
     },
   },
   admin: {

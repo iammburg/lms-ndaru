@@ -67,10 +67,10 @@ export const Users: CollectionConfig = {
     description: 'Admin users (Super Admins and Tenant Admins)',
   },
   auth: {
-    tokenExpiration: 7200, // 2 hours
+    tokenExpiration: 7200,
     verify: false,
     maxLoginAttempts: 5,
-    lockTime: 600 * 1000, // 10 minutes
+    lockTime: 600 * 1000,
   },
   access: {
     create: ({ req }) => {

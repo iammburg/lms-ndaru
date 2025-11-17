@@ -1,4 +1,72 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, Access, Where } from 'payload'
+
+const readAccess: Access = ({ req }) => {
+  if (req.user?.collection === 'users' && (req.user as any).role === 'super-admin') {
+    return true
+  }
+
+  if (req.user?.collection === 'users' && (req.user as any).role === 'tenant-admin') {
+    const userTenant = (req.user as any).tenant
+    const tenantId = typeof userTenant === 'object' ? userTenant?.id : userTenant
+
+    if (!tenantId) {
+      return false
+    }
+
+    const whereClause = {
+      tenant: { equals: tenantId },
+    }
+    return whereClause
+  }
+
+  if (req.user?.collection === 'customers') {
+    const userTenant = (req.user as any).tenant
+    const tenantId = typeof userTenant === 'object' ? userTenant?.id : userTenant
+
+    if (!tenantId) {
+      return false
+    }
+
+    const whereClause = {
+      tenant: { equals: tenantId },
+    }
+    return whereClause
+  }
+
+  return false
+}
+
+const updateAccess: Access = ({ req }) => {
+  if (req.user?.collection === 'users' && req.user?.role === 'super-admin') {
+    return true
+  }
+
+  if (req.user?.collection === 'users' && req.user?.role === 'tenant-admin') {
+    const tenantId = typeof req.user.tenant === 'object' ? req.user.tenant?.id : req.user.tenant
+
+    if (!tenantId) {
+      return false
+    }
+
+    return {
+      tenant: { equals: tenantId },
+    } as Where
+  }
+
+  if (req.user?.collection === 'customers') {
+    const tenantId = typeof req.user.tenant === 'object' ? req.user.tenant?.id : req.user.tenant
+
+    if (!tenantId) {
+      return false
+    }
+
+    return {
+      tenant: { equals: tenantId },
+    } as Where
+  }
+
+  return false
+}
 
 export const Media: CollectionConfig = {
   slug: 'media',
@@ -6,63 +74,27 @@ export const Media: CollectionConfig = {
     group: 'Media Management',
   },
   access: {
-    create: ({ req }) => {
-      // Super admin can create media (global or tenant-specific)
-      if (req.user?.collection === 'users' && req.user?.role === 'super-admin') {
-        return true
-      }
-      // Tenant admin can create media within their tenant
-      if (req.user?.collection === 'users' && req.user?.role === 'tenant-admin') {
-        return true
-      }
-      // Customers can create media within their tenant
-      if (req.user?.collection === 'customers') {
-        return true
-      }
-      return false
-    },
-    read: ({ req }) => {
-      // Super admin can read all media
-      if (req.user?.collection === 'users' && req.user?.role === 'super-admin') {
-        return true
-      }
-
-      // Tenant admin can read media in their tenant (filtered by multi-tenant plugin)
-      if (req.user?.collection === 'users' && req.user?.role === 'tenant-admin') {
-        return true
-      }
-
-      // Customers can read media (filtered by multi-tenant plugin)
-      if (req.user?.collection === 'customers') {
-        return true
-      }
-
-      return false
-    },
-    update: ({ req }) => {
-      // Super admin can update all media
-      if (req.user?.collection === 'users' && req.user?.role === 'super-admin') {
-        return true
-      }
-      // Tenant admin can update media in their tenant
-      if (req.user?.collection === 'users' && req.user?.role === 'tenant-admin') {
-        return true
-      }
-      return false
-    },
+    create: () => true,
+    read: readAccess,
+    update: updateAccess,
     delete: ({ req }) => {
-      // Super admin can delete any media
-      if (req.user?.collection === 'users' && req.user?.role === 'super-admin') {
-        return true
-      }
-      // Tenant admin can delete media in their tenant
-      if (req.user?.collection === 'users' && req.user?.role === 'tenant-admin') {
-        return true
-      }
-      return false
+      return req.user?.collection === 'users' && (req.user as any).role === 'super-admin'
     },
   },
   fields: [
+    {
+      name: 'tenant',
+      type: 'relationship',
+      relationTo: 'tenants',
+      required: false, // Optional for super-admin, auto-assigned for tenant-admin
+      admin: {
+        description: 'Tenant this media belongs to (optional for super-admin)',
+        position: 'sidebar',
+      },
+      access: {
+        update: ({ req }) => req.user?.collection === 'users',
+      }
+    },
     {
       name: 'alt',
       type: 'text',
@@ -70,4 +102,22 @@ export const Media: CollectionConfig = {
     },
   ],
   upload: true,
+  hooks: {
+    beforeChange: [
+      async ({ data, req, operation }) => {
+        // Auto-assign tenant on create for tenant-admin and customers
+        if (operation === 'create' && !data.tenant && req.user) {
+          const user = req.user as any
+          // Only auto-assign if user is NOT super-admin
+          if (!(user.collection === 'users' && user.role === 'super-admin')) {
+            const tenantId = typeof user.tenant === 'object' ? user.tenant?.id : user.tenant
+            if (tenantId) {
+              data.tenant = tenantId
+            }
+          }
+        }
+        return data
+      }
+    ]
+  },
 }

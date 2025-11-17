@@ -80,7 +80,6 @@ export async function createTenant(data: CreateTenantData) {
         } catch (adminError) {
             console.error('Error creating tenant admin:', adminError)
 
-            // Tenant created but admin failed - still return success
             return {
                 tenant,
                 adminUser: null,

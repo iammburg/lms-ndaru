@@ -37,21 +37,33 @@ export async function login({ email, password }: LoginParams): Promise<LoginResp
     })
 
     if (result.token && result.user) {
-      // Validate tenant access
+      // Validate tenant access - bidirectional check
+      const userTenant = typeof result.user.tenant === 'object'
+        ? result.user.tenant?.id
+        : result.user.tenant
+
       if (currentTenantId) {
         // User is trying to login to a tenant domain
-        const userTenant = typeof result.user.tenant === 'object'
-          ? result.user.tenant?.id
-          : result.user.tenant
-
+        // Only allow if user belongs to this specific tenant
         if (String(userTenant) !== currentTenantId) {
           return {
             success: false,
             error: 'You don\'t have access to this tenant. Please contact your administrator.'
           }
         }
+      } else {
+        // User is trying to login to main app
+        // Only allow if user has NO tenant assignment
+        if (userTenant) {
+          return {
+            success: false,
+            error: 'Please login through your tenant domain: ' +
+              (typeof result.user.tenant === 'object' && result.user.tenant?.subdomain
+                ? result.user.tenant.subdomain
+                : 'your tenant subdomain')
+          }
+        }
       }
-      // For main app (no tenant), allow login regardless of user's tenant
 
       const cookieStore = await cookies()
       cookieStore.set('payload-token', result.token, {

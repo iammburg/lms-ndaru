@@ -2,7 +2,6 @@
 
 import { getPayload } from 'payload'
 import config from '@payload-config'
-import { Customer } from '@/payload-types'
 import { Result } from '../../login/_actions/login'
 import { cookies } from 'next/headers'
 import { detectTenantFromDomain } from '@/lib/tenant'
@@ -40,9 +39,6 @@ export async function signup({ email, password }: SignupParams): Promise<SignupR
     } else {
       customerData.tenant = null
     }
-
-    console.log('Creating customer with data:', customerData)
-    console.log('type of Tenant ID:', typeof customerData.tenant)
 
     await payload.create({
       collection: 'customers',

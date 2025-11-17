@@ -48,7 +48,7 @@ export default async function MyTenantsList() {
 
     if (tenants.length === 0) {
         return (
-            <Card className="w-full max-h-3/6 overflow-auto">
+            <Card className="w-full max-h-3/4 overflow-auto">
                 <CardHeader>
                     <CardTitle>List Tenant</CardTitle>
                 </CardHeader>
@@ -62,25 +62,21 @@ export default async function MyTenantsList() {
     }
 
     return (
-        <Card className="w-full max-h-3/6 overflow-auto">
+        <Card className="w-full max-h-3/4 overflow-auto">
             <CardHeader>
                 <CardTitle>Tenant Kamu ({tenants.length})</CardTitle>
             </CardHeader>
             <CardContent>
                 <div className="space-y-4">
                     {tenants.map((tenant) => (
-                        <div
-                            key={tenant.id}
-                            className="p-4 border rounded-lg hover:bg-secondary"
-                        >
+                        <div key={tenant.id} className="p-4 border rounded-lg hover:bg-secondary">
                             <div className="flex items-start justify-between">
                                 <div className="flex-1">
                                     <div className="flex items-center gap-2 mb-2">
                                         <h3 className="font-medium text-sm">{tenant.name}</h3>
                                         <Badge
                                             variant="secondary"
-                                            className={getStatusColor(tenant.status)}
-                                        >
+                                            className={getStatusColor(tenant.status)}>
                                             {tenant.status}
                                         </Badge>
                                     </div>
