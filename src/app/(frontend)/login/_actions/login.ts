@@ -25,7 +25,6 @@ export type Result = {
 export async function login({ email, password }: LoginParams): Promise<LoginResponse> {
   const payload = await getPayload({ config })
   try {
-    // Get current tenant context
     const currentTenantId = await detectTenantFromDomain()
 
     const result: Result = await payload.login({
@@ -37,14 +36,11 @@ export async function login({ email, password }: LoginParams): Promise<LoginResp
     })
 
     if (result.token && result.user) {
-      // Validate tenant access - bidirectional check
       const userTenant = typeof result.user.tenant === 'object'
         ? result.user.tenant?.id
         : result.user.tenant
 
       if (currentTenantId) {
-        // User is trying to login to a tenant domain
-        // Only allow if user belongs to this specific tenant
         if (String(userTenant) !== currentTenantId) {
           return {
             success: false,
@@ -52,8 +48,6 @@ export async function login({ email, password }: LoginParams): Promise<LoginResp
           }
         }
       } else {
-        // User is trying to login to main app
-        // Only allow if user has NO tenant assignment
         if (userTenant) {
           return {
             success: false,

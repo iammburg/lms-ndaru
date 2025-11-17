@@ -24,7 +24,6 @@ const CoursePage = async ({ params }: { params: Promise<{ courseId: string }> })
   let course: Course | null = null
 
   try {
-    // Get tenant ID from user
     const userTenant = (user as any)?.tenant
     const tenantId = typeof userTenant === 'object' ? userTenant?.id : userTenant
 
@@ -34,7 +33,6 @@ const CoursePage = async ({ params }: { params: Promise<{ courseId: string }> })
       overrideAccess: true,
     })
 
-    // Verify course belongs to user's tenant
     const courseTenant = typeof res.tenant === 'object' ? res.tenant?.id : res.tenant
     if (tenantId && courseTenant !== tenantId) {
       console.log('Access denied: Course tenant mismatch')

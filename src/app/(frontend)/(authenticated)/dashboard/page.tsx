@@ -23,7 +23,6 @@ const page = async () => {
   let courses: Course[] = []
 
   try {
-    // Get tenant ID from user
     const userTenant = (user as Customer)?.tenant
     const tenantId = typeof userTenant === 'object' ? userTenant?.id : userTenant
 

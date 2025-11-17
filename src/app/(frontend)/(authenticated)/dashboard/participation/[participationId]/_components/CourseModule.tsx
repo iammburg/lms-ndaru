@@ -18,7 +18,6 @@ export default function CourseModule({
   totalModules,
   onParticipationUpdate,
 }: CourseModuleProps) {
-  // Guard against undefined module
   if (!module) {
     return <div className="text-red-500">Module not found</div>
   }

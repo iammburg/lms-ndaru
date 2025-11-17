@@ -8,7 +8,7 @@ export default function ResumeCourseButton({ participation }: { participation: P
   const course: Course = participation.course as Course
   const courseLenght = course.curriculum?.length ?? 0
   let progress = participation.highestUnlockedModule ?? 0
-  progress = progress + 1
+  // progress = progress + 1
   const progressPercentage = Math.round((progress / (courseLenght || 1)) * 100)
 
   const createdDate = new Date(participation.createdAt).toLocaleDateString('id-ID', {

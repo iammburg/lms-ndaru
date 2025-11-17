@@ -53,7 +53,6 @@ export const GET = async (req: NextRequest, { params }: { params: Promise<{ id: 
       }),
     })
 
-    // Generate PDF using Puppeteer
     const browser = await puppeteer.launch({
       headless: true,
       args: [
@@ -69,10 +68,8 @@ export const GET = async (req: NextRequest, { params }: { params: Promise<{ id: 
 
     const page = await browser.newPage()
 
-    // Set the HTML content directly from backend template
     await page.setContent(html, { waitUntil: 'networkidle0' })
 
-    // Generate PDF
     const pdfBuffer = await page.pdf({
       format: 'A4',
       landscape: false,

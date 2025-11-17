@@ -86,7 +86,7 @@ export const Media: CollectionConfig = {
       name: 'tenant',
       type: 'relationship',
       relationTo: 'tenants',
-      required: false, // Optional for super-admin, auto-assigned for tenant-admin
+      required: false,
       admin: {
         description: 'Tenant this media belongs to (optional for super-admin)',
         position: 'sidebar',
@@ -105,10 +105,8 @@ export const Media: CollectionConfig = {
   hooks: {
     beforeChange: [
       async ({ data, req, operation }) => {
-        // Auto-assign tenant on create for tenant-admin and customers
         if (operation === 'create' && !data.tenant && req.user) {
           const user = req.user as any
-          // Only auto-assign if user is NOT super-admin
           if (!(user.collection === 'users' && user.role === 'super-admin')) {
             const tenantId = typeof user.tenant === 'object' ? user.tenant?.id : user.tenant
             if (tenantId) {
