@@ -93,10 +93,9 @@ export const Participation: CollectionConfig = {
       name: 'tenant',
       type: 'relationship',
       relationTo: 'tenants',
-      required: true,
+      required: false,
       admin: {
         description: 'Tenant this participation belongs to',
-        position: 'sidebar',
       },
       access: {
         update: ({ req }) => req.user?.collection === 'users',

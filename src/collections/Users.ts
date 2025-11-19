@@ -105,7 +105,6 @@ export const Users: CollectionConfig = {
       ],
       admin: {
         description: 'Super Admin: Full access to all tenants. Tenant Admin: Access only to assigned tenant.',
-        position: 'sidebar',
       },
       access: {
         update: ({ req }) => req.user?.collection === 'users' && req.user?.role === 'super-admin',
@@ -118,7 +117,6 @@ export const Users: CollectionConfig = {
       required: false,
       admin: {
         description: 'Tenant assignment (only for tenant-admin role)',
-        position: 'sidebar',
         condition: (data) => data?.role === 'tenant-admin',
       },
       validate: (value: unknown, { data }: { data: Record<string, unknown> }) => {
@@ -149,7 +147,6 @@ export const Users: CollectionConfig = {
       defaultValue: true,
       admin: {
         description: 'Whether this admin account is active',
-        position: 'sidebar',
       },
       access: {
         update: ({ req }) => req.user?.collection === 'users' && req.user?.role === 'super-admin',

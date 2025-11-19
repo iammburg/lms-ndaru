@@ -1,6 +1,5 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
-import { multiTenantPlugin } from '@payloadcms/plugin-multi-tenant'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
@@ -44,16 +43,6 @@ export default buildConfig({
   sharp,
   plugins: [
     payloadCloudPlugin(),
-    multiTenantPlugin({
-      tenantsSlug: 'tenants',
-      collections: {
-      },
-      userHasAccessToAllTenants: (user) => {
-        const hasAccess = user?.collection === 'users' && user?.role === 'super-admin'
-        return hasAccess
-      },
-      useTenantsCollectionAccess: false,
-    }),
     s3Storage({
       collections: {
         media: {

@@ -80,7 +80,6 @@ export const Customers: CollectionConfig = {
       required: false,
       admin: {
         description: 'Tenant assignment (optional for main app users)',
-        position: 'sidebar',
       },
       access: {
         update: ({ req }) => req.user?.collection === 'users',

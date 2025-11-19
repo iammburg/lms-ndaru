@@ -9,7 +9,7 @@ import { getTenantContext } from '@/lib/tenant'
 
 export default async function HomePage() {
   const { tenant } = await getTenantContext()
-
+  console.log('Tenant data:', tenant)
   return (
     <div>
       {tenant && (

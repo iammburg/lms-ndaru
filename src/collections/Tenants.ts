@@ -79,7 +79,6 @@ export const Tenants: CollectionConfig = {
       label: 'Created By',
       admin: {
         description: 'Customer who created this tenant',
-        position: 'sidebar',
       },
       access: {
         update: ({ req }) => req.user?.collection === 'users',

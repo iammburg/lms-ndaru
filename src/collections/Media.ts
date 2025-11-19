@@ -25,7 +25,9 @@ const readAccess: Access = ({ req }) => {
     const tenantId = typeof userTenant === 'object' ? userTenant?.id : userTenant
 
     if (!tenantId) {
-      return false
+      return {
+        tenant: { exists: false },
+      }
     }
 
     const whereClause = {
@@ -90,7 +92,6 @@ export const Media: CollectionConfig = {
       required: false,
       admin: {
         description: 'Tenant this media belongs to (optional for super-admin)',
-        position: 'sidebar',
       },
       access: {
         update: ({ req }) => req.user?.collection === 'users',

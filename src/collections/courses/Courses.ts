@@ -28,7 +28,9 @@ const readAccess: Access = ({ req }) => {
     const tenantId = typeof userTenant === 'object' ? userTenant?.id : userTenant
 
     if (!tenantId) {
-      return false
+      return {
+        tenant: { exists: false },
+      }
     }
 
     const whereClause = {
@@ -85,10 +87,9 @@ export const Courses: CollectionConfig = {
       name: 'tenant',
       type: 'relationship',
       relationTo: 'tenants',
-      required: true,
+      required: false,
       admin: {
         description: 'Tenant this course belongs to',
-        position: 'sidebar',
       },
       access: {
         update: ({ req }) => req.user?.collection === 'users',

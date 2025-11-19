@@ -168,12 +168,6 @@ export interface User {
    * Whether this admin account is active
    */
   isActive: boolean;
-  tenants?:
-    | {
-        tenant: number | Tenant;
-        id?: string | null;
-      }[]
-    | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -298,7 +292,7 @@ export interface Course {
   /**
    * Tenant this course belongs to
    */
-  tenant: number | Tenant;
+  tenant?: (number | null) | Tenant;
   title: string;
   description: string;
   image?: (number | null) | Media;
@@ -350,7 +344,7 @@ export interface Participation {
   /**
    * Tenant this participation belongs to
    */
-  tenant: number | Tenant;
+  tenant?: (number | null) | Tenant;
   customer: number | Customer;
   course: number | Course;
   currentModule?: number | null;
@@ -460,12 +454,6 @@ export interface UsersSelect<T extends boolean = true> {
   tenant?: T;
   name?: T;
   isActive?: T;
-  tenants?:
-    | T
-    | {
-        tenant?: T;
-        id?: T;
-      };
   updatedAt?: T;
   createdAt?: T;
   email?: T;
