@@ -11,11 +11,13 @@ export async function detectTenantFromDomain(): Promise<string | null> {
         const headersList = await headers()
         const host = headersList.get('host') || headersList.get('x-forwarded-host')
 
+        console.log('[Tenant Detection] Host from headers:', host)
+
         if (!host) {
+            console.log('[Tenant Detection] No host header found')
             return null
         }
 
-        // Main app domains - no tenant
         const mainDomains = [
             'bibubelajar.com',
             'www.bibubelajar.com',
@@ -24,15 +26,16 @@ export async function detectTenantFromDomain(): Promise<string | null> {
         ]
 
         if (mainDomains.includes(host)) {
+            console.log('[Tenant Detection] Main app domain detected:', host)
             return null
         }
 
-        // Check for subdomain pattern (tenant.bibubelajar.com)
         if (host.includes('.bibubelajar.com')) {
             const subdomain = host.split('.')[0]
+            console.log('[Tenant Detection] Subdomain extracted:', subdomain)
 
-            // Skip 'www' subdomain
             if (subdomain === 'www') {
+                console.log('[Tenant Detection] Skipping www subdomain')
                 return null
             }
 
@@ -49,13 +52,19 @@ export async function detectTenantFromDomain(): Promise<string | null> {
             })
 
             if (tenantBySlug.docs.length > 0) {
-                return String(tenantBySlug.docs[0].id)
+                const tenantId = String(tenantBySlug.docs[0].id)
+                console.log('[Tenant Detection] Tenant found! ID:', tenantId, 'Name:', tenantBySlug.docs[0].name)
+                return tenantId
+            } else {
+                console.log('[Tenant Detection] No tenant found with slug:', subdomain)
             }
+        } else {
+            console.log('[Tenant Detection] Host does not match subdomain pattern:', host)
         }
 
         return null
     } catch (error) {
-        console.error('Error detecting tenant from domain:', error)
+        console.error('[Tenant Detection] Error:', error)
         return null
     }
 }

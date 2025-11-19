@@ -11,7 +11,7 @@ import CourseViewer from './_components/CourseViewer'
 export default async function ParticipationPage({
   params,
 }: {
-  params: { participationId: string }
+  params: Promise<{ participationId: string }>
 }) {
   const payload = await getPayload({ config: configPromise })
   const { participationId } = await params
@@ -22,9 +22,14 @@ export default async function ParticipationPage({
     const res: Participation = await payload.findByID({
       collection: 'participation',
       id: participationId,
-      overrideAccess: false,
-      user: user,
+      overrideAccess: true,
     })
+
+    const participationCustomerId = typeof res.customer === 'object' ? res.customer?.id : res.customer
+    if (participationCustomerId !== user?.id) {
+      console.log('Access denied: Participation does not belong to user')
+      return notFound()
+    }
 
     participation = res
   } catch (error) {

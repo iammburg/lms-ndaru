@@ -20,10 +20,8 @@ export default function LogoutButton() {
     setIsPending(false)
 
     if (result.success) {
-      // Redirect to home page after successful logout
       router.push('/')
     } else {
-      // Display error message
       setError(result.error || 'Logout failed')
     }
   }
@@ -36,7 +34,7 @@ export default function LogoutButton() {
           'Logging out...'
         ) : (
           <>
-            Logout <LogOut size={24} />
+            Keluar <LogOut size={24} />
           </>
         )}
       </Button>

@@ -18,6 +18,7 @@ export async function participate({ courseId }: { courseId: number }) {
       data: {
         course: courseId,
         customer: user.id,
+        tenant: user.tenant ? (typeof user.tenant === 'object' ? user.tenant.id : user.tenant) : null,
         currentModule: 0,
         completedModules: [],
         highestUnlockedModule: 0,
@@ -29,7 +30,7 @@ export async function participate({ courseId }: { courseId: number }) {
 
     return createdParticipation
   } catch (error) {
-    console.error('Error creating participation.')
+    console.error('Error creating participation.', error)
     throw new Error('Error creating participation.')
   }
 }

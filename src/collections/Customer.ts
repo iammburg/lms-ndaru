@@ -1,40 +1,75 @@
-import type { CollectionConfig } from 'payload'
+import { User } from '@/payload-types'
+import type { CollectionConfig, Access, Where } from 'payload'
+
+const readAccess: Access = ({ req }) => {
+  if (req.user?.collection === 'users' && (req.user as User).role === 'super-admin') {
+    return true
+  }
+
+  if (req.user?.collection === 'users' && (req.user as User).role === 'tenant-admin') {
+    const userTenant = (req.user as User).tenant
+    const tenantId = typeof userTenant === 'object' ? userTenant?.id : userTenant
+
+    if (!tenantId) {
+      return false
+    }
+
+    const whereClause = {
+      tenant: { equals: tenantId },
+    }
+    return whereClause
+  }
+
+  if (req.user?.collection === 'customers' && req.user?.id) {
+    const whereClause = {
+      id: { equals: req.user.id },
+    }
+    return whereClause
+  }
+
+  return false
+}
+
+const updateAccess: Access = ({ req }) => {
+  if (req.user?.collection === 'users' && req.user?.role === 'super-admin') {
+    return true
+  }
+
+  if (req.user?.collection === 'users' && req.user?.role === 'tenant-admin') {
+    const tenantId = typeof req.user.tenant === 'object' ? req.user.tenant?.id : req.user.tenant
+
+    if (!tenantId) {
+      return false
+    }
+
+    return {
+      tenant: { equals: tenantId },
+    } as Where
+  }
+
+  if (req.user?.collection === 'customers' && req.user?.id) {
+    return {
+      id: { equals: req.user.id },
+    } as Where
+  }
+
+  return false
+}
 
 export const Customers: CollectionConfig = {
   slug: 'customers',
   admin: {
     useAsTitle: 'email',
     group: 'User Management',
+    defaultColumns: ['email', 'tenant', 'createdAt'],
   },
   access: {
     create: () => true,
-    read: ({ req }) => {
-      // Super admin can read all customers
-      if (req.user?.collection === 'users') return true
-
-      // Customers can read their own data
-      if (req.user?.collection === 'customers') {
-        return {
-          id: { equals: req.user.id }
-        }
-      }
-
-      return false
+    read: readAccess,
+    update: updateAccess,
+    delete: ({ req }) => {
+      return req.user?.collection === 'users' && (req.user as User).role === 'super-admin'
     },
-    update: ({ req }) => {
-      // Super admin can update all customers
-      if (req.user?.collection === 'users') return true
-
-      // Customers can update their own data
-      if (req.user?.collection === 'customers') {
-        return {
-          id: { equals: req.user.id }
-        }
-      }
-
-      return false
-    },
-    delete: ({ req }) => req.user?.collection === 'users',
   },
   auth: true,
   fields: [
@@ -42,21 +77,18 @@ export const Customers: CollectionConfig = {
       name: 'tenant',
       type: 'relationship',
       relationTo: 'tenants',
-      required: false, // ✅ Optional - allows main app users without tenant
+      required: false,
       admin: {
         description: 'Tenant assignment (optional for main app users)',
-        position: 'sidebar',
       },
       access: {
-        // Only super admin can manually change tenant assignment
         update: ({ req }) => req.user?.collection === 'users',
       }
     },
   ],
   hooks: {
     beforeChange: [
-      async ({ data, req, operation }) => {
-        // Auto-assign tenant on create if not provided and on tenant domain
+      async ({ data, operation }) => {
         if (operation === 'create' && !data.tenant) {
           try {
             const { detectTenantFromDomain } = await import('../lib/tenant')
@@ -64,12 +96,16 @@ export const Customers: CollectionConfig = {
             if (tenantId) {
               data.tenant = tenantId
             }
-            // If no tenant detected (main app), leave tenant as null
           } catch (error) {
             console.error('Error auto-assigning tenant:', error)
           }
         }
         return data
+      }
+    ],
+    afterRead: [
+      async ({ doc }) => {
+        return doc
       }
     ]
   },

@@ -17,7 +17,12 @@ import { Label } from '@/components/ui/label'
 import SubmitButton from '@/components/SubmitButton'
 import { login, LoginResponse } from '../_actions/login'
 
-export default function LoginForm(): ReactElement {
+interface LoginFormProps {
+  tenantId?: number | string
+  tenantName?: string
+}
+
+export default function LoginForm({ tenantName }: LoginFormProps): ReactElement {
   const [isPending, setIsPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
@@ -45,11 +50,17 @@ export default function LoginForm(): ReactElement {
     <div className="flex min-h-screen items-center justify-center">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle>Login to your account</CardTitle>
-          <CardDescription>Enter your email below to login to your account</CardDescription>
+          <CardTitle>
+            {tenantName ? `Masuk ke ${tenantName}` : 'Masuk dengan akun kamu'}
+          </CardTitle>
+          <CardDescription>
+            {tenantName
+              ? `Masukkan email dan password untuk masuk ke ${tenantName}`
+              : 'Masukkan email dan password untuk masuk'}
+          </CardDescription>
           <CardAction>
             <Button variant="link">
-              <Link href="/signup">Sign Up</Link>
+              <Link href="/signup" className='underline'>Daftar</Link>
             </Button>
           </CardAction>
         </CardHeader>
@@ -58,7 +69,7 @@ export default function LoginForm(): ReactElement {
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" name="email" placeholder="m@example.com" required />
+                <Input id="email" type="email" name="email" placeholder="email@contoh.com" required />
               </div>
               <div className="grid gap-2">
                 <div className="flex items-center">
@@ -67,14 +78,14 @@ export default function LoginForm(): ReactElement {
                     href="#"
                     className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
                   >
-                    Forgot your password?
+                    Lupa password?
                   </a>
                 </div>
                 <Input id="password" type="password" name="password" required />
               </div>
               <div className="flex flex-col gap-2 mt-4">
                 {error && <p className="text-xs text-red-500">{error}</p>}
-                <SubmitButton loading={isPending} text="Login" />
+                <SubmitButton loading={isPending} text="Masuk" />
               </div>
             </div>
           </form>

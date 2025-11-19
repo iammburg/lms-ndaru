@@ -9,11 +9,11 @@ export default function NotFound() {
       <Card className="shadow-none bg-muted">
         <CardHeader className="px-8">
           <CardTitle className="mb-1 text-3xl font-bold text-rose-400 tracking-tight">
-            404 - Participation Not Found 😓
+            404 - Participation Not Found
           </CardTitle>
           <CardDescription className="text-base text-muted-foreground">
-            Participation yang Anda cari tidak ditemukan. Silakan periksa kembali participation yang
-            Anda cari.
+            Participation yang kamu cari tidak ditemukan. Silakan periksa kembali participation yang
+            kamu cari.
           </CardDescription>
         </CardHeader>
         <CardContent className="mt-2 flex flex-row gap-2 px-8">

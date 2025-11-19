@@ -1,4 +1,78 @@
+import { User } from '@/payload-types'
 import { CollectionConfig } from 'payload'
+import type { Access, Where } from 'payload'
+
+const readAccess: Access = ({ req: { user } }) => {
+  if (user?.collection === 'users' && user?.role === 'super-admin') {
+    return true
+  }
+
+  if (user?.collection === 'users' && user?.role === 'tenant-admin') {
+    const tenantId = typeof user.tenant === 'object' ? user.tenant?.id : user.tenant
+
+    if (!tenantId) {
+      return false
+    }
+
+    return {
+      tenant: { equals: tenantId },
+    } as Where
+  }
+
+  if (user?.collection === 'customers' && user?.id) {
+    return {
+      customer: { equals: user.id },
+    } as Where
+  }
+
+  return false
+}
+
+const updateAccess: Access = ({ req: { user } }) => {
+  if (user?.collection === 'users' && user?.role === 'super-admin') {
+    return true
+  }
+
+  if (user?.collection === 'users' && user?.role === 'tenant-admin') {
+    const tenantId = typeof user.tenant === 'object' ? user.tenant?.id : user.tenant
+
+    if (!tenantId) {
+      return false
+    }
+
+    return {
+      tenant: { equals: tenantId },
+    } as Where
+  }
+
+  if (user?.collection === 'customers' && user?.id) {
+    return {
+      customer: { equals: user.id },
+    } as Where
+  }
+
+  return false
+}
+
+const deleteAccess: Access = ({ req: { user } }) => {
+  if (user?.collection === 'users' && user?.role === 'super-admin') {
+    return true
+  }
+
+  if (user?.collection === 'users' && user?.role === 'tenant-admin') {
+    const tenantId = typeof user.tenant === 'object' ? user.tenant?.id : user.tenant
+
+    if (!tenantId) {
+      return false
+    }
+
+    return {
+      tenant: { equals: tenantId },
+    } as Where
+  }
+
+  return false
+}
 
 export const Participation: CollectionConfig = {
   slug: 'participation',
@@ -6,59 +80,24 @@ export const Participation: CollectionConfig = {
     group: 'Course Management',
   },
   access: {
-    read: ({ req: { user } }) => {
-      // Super admin can read all participation
-      if (user?.collection === 'users') return true
-
-      // Customer can only read their own participation
-      if (user?.collection === 'customers') {
-        return {
-          customer: { equals: user.id }
-        }
-      }
-
-      // Note: Tenant admin access will be handled by multi-tenant plugin
-      // since participation uses useBaseFilter: true
-      return false
-    },
+    read: readAccess,
     create: ({ req: { user } }) => {
-      // Super admin, tenant admin, and customers can create participation
-      return user?.collection === 'users' ||
-        user?.collection === 'tenantAdmins' ||
+      return (user?.collection === 'users' && (user?.role === 'super-admin' || user?.role === 'tenant-admin')) ||
         user?.collection === 'customers'
     },
-    update: ({ req: { user } }) => {
-      // Super admin can update all participation
-      if (user?.collection === 'users') return true
-
-      // Customer can only update their own participation
-      if (user?.collection === 'customers') {
-        return {
-          customer: { equals: user.id }
-        }
-      }
-
-      // Note: Tenant admin access will be handled by multi-tenant plugin
-      return false
-    },
-    delete: ({ req: { user } }) => {
-      // Only super admin can delete participation
-      // Tenant admin access will be handled by multi-tenant plugin
-      return user?.collection === 'users'
-    },
+    update: updateAccess,
+    delete: deleteAccess,
   },
   fields: [
     {
       name: 'tenant',
       type: 'relationship',
       relationTo: 'tenants',
-      required: true, // ✅ Participation must belong to a tenant
+      required: false,
       admin: {
         description: 'Tenant this participation belongs to',
-        position: 'sidebar',
       },
       access: {
-        // Only super admin can manually change tenant assignment
         update: ({ req }) => req.user?.collection === 'users',
       }
     },
@@ -104,9 +143,8 @@ export const Participation: CollectionConfig = {
   hooks: {
     beforeChange: [
       async ({ data, req, operation }) => {
-        // Auto-assign tenant on create if user has tenant and no tenant specified
         if (operation === 'create' && !data.tenant && req.user) {
-          const user = req.user as any
+          const user = req.user as User
           const tenantId = typeof user.tenant === 'object' ? user.tenant?.id : user.tenant
           if (tenantId) {
             data.tenant = tenantId

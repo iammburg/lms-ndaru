@@ -30,9 +30,9 @@ export default function Curriculum({
         let opacityClass = ''
 
         if (isCurrent) {
-          borderClass = 'border-black dark:border-white'
+          borderClass = 'border-foreground dark:background'
         } else if (isCompleted) {
-          borderClass = 'border-green-500'
+          borderClass = 'border-primary'
         } else if (isLocked) {
           opacityClass = 'opacity-50'
         }

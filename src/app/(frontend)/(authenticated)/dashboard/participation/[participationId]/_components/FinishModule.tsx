@@ -3,16 +3,24 @@ import { useState } from 'react'
 import NextButton from './NextButton'
 import { Card, CardContent } from '@/components/ui/card'
 import { CheckCircle } from 'lucide-react'
+import { markCourseCompleted } from '../_actions/updateParticipation'
 
-export default function FinishModule({ participation }: { participation: Participation }) {
+interface FinishModuleProps {
+  participation: Participation
+}
+
+export default function FinishModule({ participation }: FinishModuleProps) {
   const [loading, setLoading] = useState(false)
+  const course: Course = participation.course as Course
+  const finishBlockIndex = (course.curriculum?.length ?? 1) - 1 // Last block is finish block
 
   async function handleDownload() {
     setLoading(true)
     try {
-      let course: Course = participation.course as Course
+      await markCourseCompleted(participation.id.toString(), finishBlockIndex)
+
       const customer = participation.customer as Customer
-      let response = await fetch(`/printCertificate/${participation.id}`, {
+      const response = await fetch(`/printCertificate/${participation.id}`, {
         method: 'GET',
       })
 
@@ -46,7 +54,7 @@ export default function FinishModule({ participation }: { participation: Partici
           <div className="flex items-center gap-3">
             <CheckCircle className="size-4 text-green-600 animate-caret-blink" />
             <p className="text-green-700 dark:text-green-300">
-              Selamat! Kamu telah menyelesaikan course ini
+              Selamat! Kamu telah menyelesaikan course ini. Silakan unduh sertifikatmu di bawah ini untuk menandai progress terakhirmu.
             </p>
           </div>
         </CardContent>

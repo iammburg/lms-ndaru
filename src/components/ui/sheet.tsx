@@ -43,7 +43,7 @@ function SheetContent({
   className,
   children,
   side = 'right',
-  ...props
+  // ...props
 }: React.ComponentProps<typeof SheetPrimitive.Content> & {
   side?: 'top' | 'right' | 'bottom' | 'left'
 }) {

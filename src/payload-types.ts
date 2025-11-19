@@ -65,7 +65,6 @@ export interface Config {
   auth: {
     users: UserAuthOperations;
     customers: CustomerAuthOperations;
-    tenantAdmins: TenantAdminAuthOperations;
   };
   blocks: {};
   collections: {
@@ -75,7 +74,6 @@ export interface Config {
     courses: Course;
     participation: Participation;
     tenants: Tenant;
-    tenantAdmins: TenantAdmin;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -88,7 +86,6 @@ export interface Config {
     courses: CoursesSelect<false> | CoursesSelect<true>;
     participation: ParticipationSelect<false> | ParticipationSelect<true>;
     tenants: TenantsSelect<false> | TenantsSelect<true>;
-    tenantAdmins: TenantAdminsSelect<false> | TenantAdminsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -105,9 +102,6 @@ export interface Config {
       })
     | (Customer & {
         collection: 'customers';
-      })
-    | (TenantAdmin & {
-        collection: 'tenantAdmins';
       });
   jobs: {
     tasks: unknown;
@@ -150,36 +144,30 @@ export interface CustomerAuthOperations {
     password: string;
   };
 }
-export interface TenantAdminAuthOperations {
-  forgotPassword: {
-    email: string;
-    password: string;
-  };
-  login: {
-    email: string;
-    password: string;
-  };
-  registerFirstUser: {
-    email: string;
-    password: string;
-  };
-  unlock: {
-    email: string;
-    password: string;
-  };
-}
 /**
+ * Admin users (Super Admins and Tenant Admins)
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
   id: number;
-  tenants?:
-    | {
-        tenant: number | Tenant;
-        id?: string | null;
-      }[]
-    | null;
+  /**
+   * Super Admin: Full access to all tenants. Tenant Admin: Access only to assigned tenant.
+   */
+  role: 'super-admin' | 'tenant-admin';
+  /**
+   * Tenant assignment (only for tenant-admin role)
+   */
+  tenant?: (number | null) | Tenant;
+  /**
+   * Full name of the admin user
+   */
+  name?: string | null;
+  /**
+   * Whether this admin account is active
+   */
+  isActive: boolean;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -277,6 +265,9 @@ export interface Customer {
  */
 export interface Media {
   id: number;
+  /**
+   * Tenant this media belongs to (optional for super-admin)
+   */
   tenant?: (number | null) | Tenant;
   alt: string;
   prefix?: string | null;
@@ -301,7 +292,7 @@ export interface Course {
   /**
    * Tenant this course belongs to
    */
-  tenant: number | Tenant;
+  tenant?: (number | null) | Tenant;
   title: string;
   description: string;
   image?: (number | null) | Media;
@@ -353,7 +344,7 @@ export interface Participation {
   /**
    * Tenant this participation belongs to
    */
-  tenant: number | Tenant;
+  tenant?: (number | null) | Tenant;
   customer: number | Customer;
   course: number | Course;
   currentModule?: number | null;
@@ -370,46 +361,6 @@ export interface Participation {
   isCompleted?: boolean | null;
   updatedAt: string;
   createdAt: string;
-}
-/**
- * Administrators for specific tenants
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "tenantAdmins".
- */
-export interface TenantAdmin {
-  id: number;
-  tenant?: (number | null) | Tenant;
-  /**
-   * Role within the tenant
-   */
-  role: 'admin' | 'manager';
-  /**
-   * Whether this admin account is active
-   */
-  isActive: boolean;
-  permissions?: {
-    canManageUsers?: boolean | null;
-    canManageCourses?: boolean | null;
-    canViewAnalytics?: boolean | null;
-  };
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
-    | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
-      }[]
-    | null;
-  password?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -441,10 +392,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'tenants';
         value: number | Tenant;
-      } | null)
-    | ({
-        relationTo: 'tenantAdmins';
-        value: number | TenantAdmin;
       } | null);
   globalSlug?: string | null;
   user:
@@ -455,10 +402,6 @@ export interface PayloadLockedDocument {
     | {
         relationTo: 'customers';
         value: number | Customer;
-      }
-    | {
-        relationTo: 'tenantAdmins';
-        value: number | TenantAdmin;
       };
   updatedAt: string;
   createdAt: string;
@@ -477,10 +420,6 @@ export interface PayloadPreference {
     | {
         relationTo: 'customers';
         value: number | Customer;
-      }
-    | {
-        relationTo: 'tenantAdmins';
-        value: number | TenantAdmin;
       };
   key?: string | null;
   value?:
@@ -511,12 +450,10 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
-  tenants?:
-    | T
-    | {
-        tenant?: T;
-        id?: T;
-      };
+  role?: T;
+  tenant?: T;
+  name?: T;
+  isActive?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -665,38 +602,6 @@ export interface TenantsSelect<T extends boolean = true> {
       };
   updatedAt?: T;
   createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "tenantAdmins_select".
- */
-export interface TenantAdminsSelect<T extends boolean = true> {
-  tenant?: T;
-  role?: T;
-  isActive?: T;
-  permissions?:
-    | T
-    | {
-        canManageUsers?: T;
-        canManageCourses?: T;
-        canViewAnalytics?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-  email?: T;
-  resetPasswordToken?: T;
-  resetPasswordExpiration?: T;
-  salt?: T;
-  hash?: T;
-  loginAttempts?: T;
-  lockUntil?: T;
-  sessions?:
-    | T
-    | {
-        id?: T;
-        createdAt?: T;
-        expiresAt?: T;
-      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

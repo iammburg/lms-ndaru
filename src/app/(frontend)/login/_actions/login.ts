@@ -25,7 +25,6 @@ export type Result = {
 export async function login({ email, password }: LoginParams): Promise<LoginResponse> {
   const payload = await getPayload({ config })
   try {
-    // Get current tenant context
     const currentTenantId = await detectTenantFromDomain()
 
     const result: Result = await payload.login({
@@ -37,21 +36,28 @@ export async function login({ email, password }: LoginParams): Promise<LoginResp
     })
 
     if (result.token && result.user) {
-      // Validate tenant access
-      if (currentTenantId) {
-        // User is trying to login to a tenant domain
-        const userTenant = typeof result.user.tenant === 'object'
-          ? result.user.tenant?.id
-          : result.user.tenant
+      const userTenant = typeof result.user.tenant === 'object'
+        ? result.user.tenant?.id
+        : result.user.tenant
 
+      if (currentTenantId) {
         if (String(userTenant) !== currentTenantId) {
           return {
             success: false,
             error: 'You don\'t have access to this tenant. Please contact your administrator.'
           }
         }
+      } else {
+        if (userTenant) {
+          return {
+            success: false,
+            error: 'Please login through your tenant domain: ' +
+              (typeof result.user.tenant === 'object' && result.user.tenant?.subdomain
+                ? result.user.tenant.subdomain
+                : 'your tenant subdomain')
+          }
+        }
       }
-      // For main app (no tenant), allow login regardless of user's tenant
 
       const cookieStore = await cookies()
       cookieStore.set('payload-token', result.token, {

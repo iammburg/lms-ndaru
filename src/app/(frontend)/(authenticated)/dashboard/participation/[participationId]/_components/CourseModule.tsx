@@ -1,10 +1,10 @@
-import { Participation } from '@/payload-types'
+import { Participation, Course } from '@/payload-types'
 import VideoModule from './VideoModule'
 import QuizModule from './QuizModule'
 import FinishModule from './FinishModule'
 
 interface CourseModuleProps {
-  module: any
+  module: NonNullable<Course['curriculum']>[number] | undefined
   participation: Participation
   onCompleted: (nextIndex: number) => void
   totalModules: number
@@ -18,6 +18,10 @@ export default function CourseModule({
   totalModules,
   onParticipationUpdate,
 }: CourseModuleProps) {
+  if (!module) {
+    return <div className="text-red-500">Module not found</div>
+  }
+
   switch (module.blockType) {
     case 'video':
       return (
@@ -42,6 +46,6 @@ export default function CourseModule({
     case 'finish':
       return <FinishModule participation={participation} />
     default:
-      return <div>Tipe module {module.blockType} tidak diketahui</div>
+      return <div>Tipe module tidak diketahui</div>
   }
 }

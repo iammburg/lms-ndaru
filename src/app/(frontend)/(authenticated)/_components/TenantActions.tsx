@@ -14,7 +14,7 @@ export default function TenantActions({ tenantSlug }: TenantActionsProps) {
                 variant="outline"
                 onClick={() => window.open(`https://${tenantSlug}.bibubelajar.com`, '_blank')}
             >
-                Visit Tenant
+                Kunjungi Tenant
             </Button>
             <Button
                 size="sm"

@@ -5,10 +5,9 @@ import { NavigationSheet } from './NavigationSheet'
 import Link from 'next/link'
 
 import { headers as getHeaders } from 'next/headers.js'
-import Image from 'next/image'
 import { getPayload } from 'payload'
-import { fileURLToPath } from 'url'
 import config from '@/payload.config'
+import { ModeToggle } from '../mode-toggle'
 
 export default async function Navbar() {
   const headers = await getHeaders()
@@ -34,10 +33,10 @@ export default async function Navbar() {
             {!user ? (
               <div className="flex items-center gap-3">
                 <Button variant="outline" className="hidden sm:inline-flex">
-                  <Link href="/login">Log In</Link>
+                  <Link href="/login">Masuk</Link>
                 </Button>
                 <Button>
-                  <Link href="/signup">Sign Up</Link>
+                  <Link href="/signup">Daftar</Link>
                 </Button>
               </div>
             ) : (
@@ -45,6 +44,7 @@ export default async function Navbar() {
                 <Link href="/dashboard">Dashboard</Link>
               </Button>
             )}
+            <ModeToggle />
 
             {/* Mobile Menu */}
             <div className="md:hidden">

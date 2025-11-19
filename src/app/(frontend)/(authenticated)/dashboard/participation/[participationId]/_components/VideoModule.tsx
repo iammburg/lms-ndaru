@@ -1,11 +1,13 @@
 import { useState } from 'react'
-import { Participation } from '@/payload-types'
+import { Participation, Course } from '@/payload-types'
 import NextButton from './NextButton'
 import { markProgress } from '../_actions/markProgress'
 import { Separator } from '@/components/ui/separator'
 
+type VideoModule = Extract<NonNullable<Course['curriculum']>[number], { blockType: 'video' }>
+
 interface VideoModuleProps {
-  module: any
+  module: VideoModule
   participation: Participation
   onCompleted: (nextIndex: number) => void
   totalModules: number

@@ -129,7 +129,51 @@ export async function completeModule(
   }
 }
 
-// di sini ada 3 function ygy
+export async function markCourseCompleted(
+  participationId: string,
+  finishBlockIndex: number,
+) {
+  const payload = await getPayload({ config: configPromise })
+  const user = await getUser()
+
+  if (!user) {
+    throw new Error('User not found')
+  }
+
+  try {
+    const participation: Participation = await payload.findByID({
+      collection: 'participation',
+      id: participationId,
+      overrideAccess: false,
+      user: user,
+    })
+
+    const completedModules = (participation.completedModules as number[]) || []
+
+    if (!completedModules.includes(finishBlockIndex)) {
+      completedModules.push(finishBlockIndex)
+    }
+
+    const updatedParticipation = await payload.update({
+      collection: 'participation',
+      id: participationId,
+      data: {
+        completedModules,
+        isCompleted: true,
+      },
+      overrideAccess: false,
+      user: user,
+    })
+
+    return updatedParticipation
+  } catch (error) {
+    console.error('Error marking course as completed:', error)
+    throw new Error(error instanceof Error ? error.message : String(error))
+  }
+}
+
+// di sini ada 4 function ygy
 // updateParticipation: buat update data participation secara umum
 // navigateToModule: buat navigasi ke module tertentu, tapi cuma boleh ke module yg udah di unlock
 // completeModule: buat nandain kalo module udah selesai, terus unlock module berikutnya kalo ada
+// markCourseCompleted: buat nandain kalo course udah selesai (finish block), set isCompleted = true
